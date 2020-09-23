@@ -40,6 +40,6 @@ Itspoma, the creator of the audio fingerprinting and recognition code.
   ```
 - Can I add my own songs to the database?
 
-  Yes, itspoma made this possible. Just upload that mp3 file into the "mp3s" folder. Now do `python collect-fingerprints-of-songs.py`. Any song in the 'mp3s' folder that was previously added already will be skipped. The song is now added into the database and can be recognised. For more info please check out [itspoma's repo](https://github.com/itspoma/audio-fingerprint-identifying-python)
+  Yes, itspoma made this possible. Just upload that mp3 file into the "mp3" folder. Now do `python collect-fingerprints-of-songs.py`. Any song in the 'mp3' folder that was previously added already will be skipped. The song is now added into the database and can be recognised. For more info please check out [itspoma's repo](https://github.com/itspoma/audio-fingerprint-identifying-python)
   
 
