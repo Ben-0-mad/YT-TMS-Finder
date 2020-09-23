@@ -25,6 +25,10 @@ This code makes it possible to search youtube channels for songs without having 
 ```
 6. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created.
 
+## Note
+
+- In case you do ```> python reset-database.py```, simply do ```python collect-fingerprints-from-songs.py```.
+
 ## Any problems might arise due to
 1. Python not being recognised as internal command. FIX by adding python interpreter folder to the PATH variable)
 1. ffmpeg not being installed. FIX by opening powershell in administrator mode, then in this shell do 
