@@ -27,7 +27,7 @@ Itspoma, the creator of the audio fingerprinting and recognition code.
 
 ## Any problems might arise due to
 1. Python not being recognised as internal command. FIX by adding python interpreter folder to the PATH variable)
-1. ffmpeg not being installed correctly. FIX by opening powershell in administrator mode, then in this shell do 
+1. ffmpeg not being installed. FIX by opening powershell in administrator mode, then in this shell do 
 ```@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin" ``` and then ```choco install -y ffmpeg``` afterwards. You can check that ffmpeg is installed by doing ```choco search ffmpeg```.
 
 1. Sql is not an installed module in python 3. FIX by opening a command prompt and doing `pip install sqlite3`
