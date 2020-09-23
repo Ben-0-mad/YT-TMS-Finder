@@ -20,7 +20,7 @@ $$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\        
    \__|   \__|     \__| \______/       \__|      \__|\__|  \__| \_______| \_______|\__|      \__|\__|
                                                                                                      
 
-example url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
+example for channel url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 """)
 
 os.mkdir("downloaded_mp3s")
