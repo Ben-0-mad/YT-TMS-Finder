@@ -20,7 +20,7 @@ Itspoma, the creator of the audio fingerprinting and recognition code.
 ```
 > pip install -r requirements.txt
 ```
-1. Now run
+5. Now run
 ```
 > python find_stable.py
 ```
