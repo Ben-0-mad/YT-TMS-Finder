@@ -13,7 +13,7 @@ Itspoma, the creator of the audio fingerprinting and recognition code.
 
 ## How to set up 
 
-1. Download the youtube-dl folder from https://drive.google.com/drive/folders/1kw1Wk-YJmki5malOPy1WIxS_dWkRqJeE?usp=sharing (These files could not be uploaded to the github page since they're too big.)
+1. Download the youtube-dl folder from [this google drive](https://drive.google.com/drive/folders/1kw1Wk-YJmki5malOPy1WIxS_dWkRqJeE?usp=sharing) (These files could not be uploaded to the github page since they're too big.)
 1. Move the just downloaded youtube-dl folder into the YT-TMS-Finder folder.
 1. Open a command prompt and install the requirements:
 ```
@@ -30,6 +30,6 @@ Itspoma, the creator of the audio fingerprinting and recognition code.
   ```
 - Can I add my own songs to the database?
 
-  Yes, itspoma made this possible. Just upload that mp3 file into the "mp3s" folder. Now do `python collect-fingerprints-of-songs.py`. Any song in the 'mp3s' folder that was previously added already will be skipped. The song is now added into the database and can be recognised. For more info please check out: https://github.com/itspoma/audio-fingerprint-identifying-python
+  Yes, itspoma made this possible. Just upload that mp3 file into the "mp3s" folder. Now do `python collect-fingerprints-of-songs.py`. Any song in the 'mp3s' folder that was previously added already will be skipped. The song is now added into the database and can be recognised. For more info please check out [itspoma's repo](https://github.com/itspoma/audio-fingerprint-identifying-python)
   
 
