@@ -50,7 +50,7 @@ This code was made in an effort to it easier to find the song that has been dubb
   At the moment it ins't. I have an idea in mind of how to fix this but I'm testing it at the moment.
   
 - Is it storage efficient?
-  Yes, very.
+  After installing the necessary modules, yes, very.
 
 - How does it work in detail?
   First we have to get all the video ID's from a youtube channel. This is not possbile by simply using requests or beautifulsoup. We would have to open the browser ourselves going down all the way to the bottom of the page, but we can also do this with webbot so we don't have to do it. Then it downloads the HTML source. From this HTML file we can obtain all the video ID's and their time length without the need of the YouTube API (which costs money). For every video the following is done:
