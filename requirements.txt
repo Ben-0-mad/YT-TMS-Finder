@@ -1,0 +1,11 @@
+numpy>=1
+scipy
+matplotlib
+termcolor
+cython
+pyaudio
+wave
+pydub
+black
+flake8
+webbot
