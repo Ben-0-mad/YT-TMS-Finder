@@ -15,7 +15,7 @@ Itspoma, the creator of the audio fingerprinting and recognition code.
 
 1. Download the youtube-dl folder from https://drive.google.com/drive/folders/1kw1Wk-YJmki5malOPy1WIxS_dWkRqJeE?usp=sharing (These files could not be uploaded to the github page since they're too big.)
 1. Move the just downloaded youtube-dl folder into the YT-TMS-Finder folder.
-1. Install requirements:
+1. Open a command prompt and install the requirements:
 ```
 > pip install -r requirements.txt
 ```
