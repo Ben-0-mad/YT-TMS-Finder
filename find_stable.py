@@ -23,7 +23,10 @@ $$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\        
 example for channel url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 """)
 
-os.mkdir("downloaded_mp3s")
+try:
+   os.mkdir("downloaded_mp3s")
+except:
+   None
 class Finder:
     def __init__(self, channel_url):
         self.channel_url = channel_url.replace('featured','videos')
