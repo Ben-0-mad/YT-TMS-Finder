@@ -23,7 +23,7 @@ This code was made in an effort to make it easier to find the song that has been
 ```
 > python find_stable.py
 ```
-6. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created.
+6. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created so you don't have to check the progress constantly.
 
 ## Note
 
