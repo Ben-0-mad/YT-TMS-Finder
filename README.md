@@ -29,6 +29,43 @@ This code was made in an effort to it easier to find the song that has been dubb
 
 - In case you do ```> python reset-database.py```, simply do ```python collect-fingerprints-from-songs.py```.
 
+## Example
+
+```bat
+Ben-0-mad> python find_stable.py
+
+Welcome to
+
+
+$$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\                    
+\__$$  __|$$$\    $$$ |$$  __$$\       $$  __$$\ \__|                $$ |                    
+   $$ |   $$$$\  $$$$ |$$ /  \__|      $$ /  \__|$$\ $$$$$$$\   $$$$$$$ | $$$$$$\   $$$$$$\  
+   $$ |   $$\$$\$$ $$ |\$$$$$$\        $$$$\     $$ |$$  __$$\ $$  __$$ |$$  __$$\ $$  __$$\ 
+   $$ |   $$ \$$$  $$ | \____$$\       $$  _|    $$ |$$ |  $$ |$$ /  $$ |$$$$$$$$ |$$ |  \__|
+   $$ |   $$ |\$  /$$ |$$\   $$ |      $$ |      $$ |$$ |  $$ |$$ |  $$ |$$   ____|$$ |
+   $$ |   $$ | \_/ $$ |\$$$$$$  |      $$ |      $$ |$$ |  $$ |\$$$$$$$ |\$$$$$$$\ $$ |      
+   \__|   \__|     \__| \______/       \__|      \__|\__|  \__| \_______| \_______|\__|      
+
+
+example url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
+
+
+Please enter the channel url: https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
+
+DevTools listening on ws://127.0.0.1:16892/devtools/browser/8f88a074-8217-418e-8427-73d92bfbe962
+
+n2i-22aBC3E 0:07
+Song with id n2i-22aBC3E is less than 3 minutes! (0)
+Downloading mp3...
+This is Michael HD.mp3 downloaded, now performing fingerprint match scan. Please wait...
+
+Id75WC1yWXg 2:57
+Song with id Id75WC1yWXg is less than 3 minutes! (2)
+Downloading mp3...
+Cursed Images with The Most Mysterious Song on the Internet playing.mp3 downloaded, now performing fingerprint match scan. Please wait...
+POSSIBLE MATCH FOUND!
+```
+
 ## Any problems might arise due to
 1. Python not being recognised as internal command. FIX by adding python interpreter folder to the PATH variable)
 1. ffmpeg not being installed. FIX by opening powershell in administrator mode, then in this shell do 
