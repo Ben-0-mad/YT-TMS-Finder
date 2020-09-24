@@ -8,9 +8,9 @@ This code was made in an effort to make it easier to find the song that has been
 
 The necessary code was already available, I just made them work together.
 
-## Credits to:
-- The makers of youtube-dl
-- Itspoma, the creator of the audio fingerprinting and recognition code.
+## Credits:
+- Credit to the makers of youtube-dl
+- Special thanks and credit to Itspoma, the creator of the audio fingerprinting and recognition code.
 
 ## How to set up (please read)
 
