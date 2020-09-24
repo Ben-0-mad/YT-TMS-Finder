@@ -104,6 +104,7 @@ class Finder:
                     with open("MATCHES.txt", "a") as f:
                         f.write(f"{songname} with YT ID {id} has a match with the database!\n")
                 self.delete_mp3s()
+                print("mp3 deleted.")
     
 
 
