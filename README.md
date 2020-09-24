@@ -4,7 +4,7 @@
 
 ## What you need to know
 
-This code was made in an effort to it easier to find the song that has been dubbed as 'the most mysterious song on the internet' and it makes it possible to search youtube channels for songs without having to manually check the videos. This is done by crawling their youtube channel, downloading a video if it is under 4 minutes long, fingerprinting the audio, and checking it against a database (the database which is included in this program). It was developed for Windows so people don't have to install Virtual machines or WSL subsystems or anything like that, and also because my university administrator doesn't allow changing operating systems.
+This code was made in an effort to make it easier to find the song that has been dubbed as 'the most mysterious song on the internet' and it makes it possible to search youtube channels for songs without having to manually check the videos. This is done by crawling their youtube channel, downloading a video if it is under 4 minutes long, fingerprinting the audio, and checking it against a database (the database which is included in this program). It was developed for Windows so people don't have to install Virtual machines or WSL subsystems or anything like that, and also because my university administrator doesn't allow changing operating systems.
 
 ## Credits to:
 - The makers of youtube-dl
