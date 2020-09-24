@@ -23,10 +23,6 @@ $$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\
 example for channel url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 """)
 
-try:
-    os.mkdir("downloaded_mp3s")
-except:
-    None
 class Finder:
     def __init__(self, channel_url):
         self.channel_url = channel_url.replace('featured','videos')
@@ -91,8 +87,9 @@ class Finder:
         for starting_char, time_span in zip(starting_chars[0::2], time_spans_plain):
             if int(time_span.split(":")[-2]) < 4:
                 id=source[starting_char+15:starting_char+26]
+                print("")
                 print(id, time_span)
-                print(f"\nSong with id {id} is less than 4 minutes! ({time_span.split(':')[-2]})")
+                print(f"Song with id {id} is less than 4 minutes! ({time_span.split(':')[-2]})")
                 print("Downloading mp3...")
                 self.get_song_mp3(id)
                 print(f"{os.listdir('downloaded_mp3s')[0]} downloaded, now performing fingerprint match scan. Please wait...")
