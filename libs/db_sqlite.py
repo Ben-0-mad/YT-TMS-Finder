@@ -93,3 +93,32 @@ class SqliteDatabase(Database):
         )
         rows = self.executeOne(query)
         return int(rows[0])
+    
+    def create_checked_ids(self):
+        query = '''CREATE TABLE IF NOT EXISTS checked_ids
+             (id TEXT)'''
+        
+        self.cur.execute(query)
+        self.conn.commit()
+    
+    def add_checked_id(self, watch_id):
+        if not self.in_checked_ids(watch_id):
+            query = f"INSERT INTO checked_ids VALUES ('{watch_id}');"
+            self.cur.execute(query)
+            self.conn.commit()
+        
+    def in_checked_ids(self, watch_id):
+        res = self.cur.execute(f"SELECT 1 FROM checked_ids WHERE watch_id = '{watch_id}'")
+        if res.fetchall() != []:
+            return True
+        else:
+            return False
+    
+    '''
+    def __exit__():
+        try:
+            self.conn.close()
+        except error as e:
+            print(e)
+    '''
+    

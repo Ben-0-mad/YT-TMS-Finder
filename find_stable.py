@@ -4,29 +4,42 @@ import time
 import re
 import bs4 as bs
 import subprocess
+from libs.db_sqlite import SqliteDatabase
+import argparse
 #from fuzzywuzzy import fuzz
 
 print("""
 Welcome to 
 
 
-$$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\                     
+$$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\                      
 \__$$  __|$$$\    $$$ |$$  __$$\       $$  __$$\ \__|                $$ |                    
-   $$ |   $$$$\  $$$$ |$$ /  \__|      $$ /  \__|$$\ $$$$$$$\   $$$$$$$ | $$$$$$\   $$$$$$\  
+   $$ |   $$$$\  $$$$ |$$ /  \__|      $$ /  \__|$$\ $$$$$$$\   $$$$$$$ | $$$$$$\   $$$$$$\ 
    $$ |   $$\$$\$$ $$ |\$$$$$$\        $$$$\     $$ |$$  __$$\ $$  __$$ |$$  __$$\ $$  __$$\ 
    $$ |   $$ \$$$  $$ | \____$$\       $$  _|    $$ |$$ |  $$ |$$ /  $$ |$$$$$$$$ |$$ |  \__|
-   $$ |   $$ |\$  /$$ |$$\   $$ |      $$ |      $$ |$$ |  $$ |$$ |  $$ |$$   ____|$$ |              
+   $$ |   $$ |\$  /$$ |$$\   $$ |      $$ |      $$ |$$ |  $$ |$$ |  $$ |$$   ____|$$ |         
    $$ |   $$ | \_/ $$ |\$$$$$$  |      $$ |      $$ |$$ |  $$ |\$$$$$$$ |\$$$$$$$\ $$ |      
    \__|   \__|     \__| \______/       \__|      \__|\__|  \__| \_______| \_______|\__|      
                                                                                                      
 
-example for channel url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
+example url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 """)
+
+def get_arguments():
+    parser = argparse.ArgumentParser(description="TMS-Finder")
+    parser.add_argument("-i", "--ignore", dest="ignore", help="Ignore already checked videos", action='store_true')
+    parser.add_argument("-s", "--speedmode", dest="speedmode", help="Activate speed mode", action = "store_true")
+    return parser.parse_args()
+
+args = get_arguments()
+
+
 
 class Finder:
     def __init__(self, channel_url):
+        self.args = args
         self.channel_url = channel_url.replace('featured','videos')
-        #self.tms_fp = self.fingerprint_mp3("TMS.mp3")
+        self.sql = SqliteDatabase()
     
     def get_song_mp3(self, id: str) -> None:
         """
@@ -46,6 +59,7 @@ class Finder:
         # Download the mp3 file from youtube
         os.system(f"{path_youtube_dl_exec} -x --audio-format mp3 -q --no-warnings -o {destination_arg} {url}")
         
+        
     def delete_mp3s(self):
         """
         Deletes all mp3s in the mp3s folder.
@@ -54,9 +68,8 @@ class Finder:
         for file in os.listdir("downloaded_mp3s"):
             full_path = os.path.join(current_directory, "downloaded_mp3s", file)
             os.remove(full_path)
-
-    def get_channel_vid_ids(self):
-        #Get the HTML source of the channel's video section
+    
+    def get_channel_ids(self):
         driver = Browser()
         driver.go_to(self.channel_url)
         time.sleep(3)
@@ -66,6 +79,11 @@ class Finder:
             source = driver.get_page_source()
             driver.scrolly(5000)
         driver.quit()
+        return source
+    
+    def check_channel(self):
+        #Get the HTML source of the channel's video section
+        source = self.get_channel_ids()
         
         #Wherever "href=\"/watch" is found within the page source, gives a list containing the position of each "href=\"/watch" substring
         starting_chars = [m.start() for m in re.finditer("href=\"/watch", source)]
@@ -80,37 +98,58 @@ class Finder:
         time_spans_plain = [time_span.text.strip() for time_span in time_spans]
         del time_spans
         
-        #for a,b in zip(starting_chars[0::2], time_spans_plain):
-        #    print(a,b)
-        
-        #for starting_char, time_span in zip(starting_chars[::2], time_spans_plain):
         for starting_char, time_span in zip(starting_chars[0::2], time_spans_plain):
             if int(time_span.split(":")[-2]) < 4:
                 id=source[starting_char+15:starting_char+26]
-                print("")
-                print(id, time_span)
-                print(f"Song with id {id} is less than 4 minutes! ({time_span.split(':')[-2]})")
-                print("Downloading mp3...")
-                self.get_song_mp3(id)
-                print(f"{os.listdir('downloaded_mp3s')[0]} downloaded, now performing fingerprint match scan. Please wait...")
-                file_recogniser_path = os.path.join(os.getcwd(), "recognize-from-file.py")
-                songname = os.listdir("downloaded_mp3s")[0]
-                output = subprocess.check_output(['python', file_recogniser_path, os.path.join(os.getcwd(), "downloaded_mp3s", songname )])
-                if "POSSIBLE MATCH FOUND" in output.decode():
-                    print("POSSIBLE MATCH FOUND!")
-                    with open("MATCHES.txt", "a") as f:
-                        f.write(f"{songname} with YT ID {id} has a match with the database!\n")
-                self.delete_mp3s()
-                print("mp3 deleted.")
+                if self.args.ignore:
+                    if not self.sql.in_checked_ids(id):
+                        print("")
+                        print(id, time_span)
+                        print(f"Song with id {id} is less than 4 minutes! ({time_span.split(':')[-2]})")
+                        print("Downloading mp3...")
+                        try:
+                            self.get_song_mp3(id)
+                        except error as e:
+                            print("Youtube audio couldn't be downloaded. Skipping for now.")
+                            print(e)
+                        print(f"{os.listdir('downloaded_mp3s')[0]} downloaded, now performing fingerprint match scan. Please wait...")
+                        file_recogniser_path = os.path.join(os.getcwd(), "recognize-from-file.py")
+                        songname = os.listdir("downloaded_mp3s")[0]
+                    
+                        output = subprocess.check_output(['python', file_recogniser_path, os.path.join(os.getcwd(), "downloaded_mp3s", songname )])
+                        if "POSSIBLE MATCH FOUND" in output.decode():
+                            print("POSSIBLE MATCH FOUND!")
+                            with open("MATCHES.txt", "a") as f:
+                                f.write(f"{songname} with YT ID {id} has a match with the database!\n")
+                        self.delete_mp3s()
+                        print("mp3 deleted.")
+                        self.sql.add_checked_id(id)
+                else:
+                    print("")
+                    print(id, time_span)
+                    print(f"Song with id {id} is less than 4 minutes! ({time_span.split(':')[-2]})")
+                    print("Downloading mp3...")
+                    self.get_song_mp3(id)
+                    print(f"{os.listdir('downloaded_mp3s')[0]} downloaded, now performing fingerprint match scan. Please wait...")
+                    file_recogniser_path = os.path.join(os.getcwd(), "recognize-from-file.py")
+                    songname = os.listdir("downloaded_mp3s")[0]
+                    
+                    output = subprocess.check_output(['python', file_recogniser_path, os.path.join(os.getcwd(), "downloaded_mp3s", songname )])
+                    if "POSSIBLE MATCH FOUND" in output.decode():
+                        print("POSSIBLE MATCH FOUND!")
+                        with open("MATCHES.txt", "a") as f:
+                            f.write(f"{songname} with YT ID {id} has a match with the database!\n")
+                    self.delete_mp3s()
+                    print("mp3 deleted.")
+                    self.sql.add_checked_id(id)
     
 
 
 if __name__ == '__main__':
     #os.system("color 02")
     #print("Only 1337 hacekrs may use this python scwipt!")
-    
     channel_url = input("\nPlease enter the channel url: ")   #Example input: www.youtube.com/c/GlitchxCity/featured
     finder = Finder(channel_url)
-    finder.get_channel_vid_ids()
+    finder.check_channel()
     #finder.test()
     #finder.delete_mp3() WORKS
