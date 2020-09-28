@@ -84,7 +84,7 @@ mp3 deleted
 1. Sqlite3 is not an installed module in python 3. FIX by opening a command prompt and doing `pip install sqlite3`
 
 ## FAQ
-- How to heck a youtube channel?
+- How to check a youtube channel?
 
   ```
   > python find_stable.py
