@@ -31,6 +31,12 @@ The necessary code was already available, I just made them work together.
 
 - In case you do ```> python reset-database.py```, simply do ```python collect-fingerprints-from-songs.py```.
 
+## Updates
+
+### V1.0.1
+- Option to ignore previously tried videos. This is useful in case the process unexpectedly ends and you want to continue where you left off.
+- Speedmode available in v1.0.2
+
 ## Example
 
 ```bat
