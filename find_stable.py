@@ -68,9 +68,8 @@ class Finder:
             sleep(0.1)
             self.songname = os.listdir("downloaded_mp3s")[0]
             print(f"{os.listdir('downloaded_mp3s')[0]} downloaded, now performing fingerprint match scan. Please wait...")
-        except error as e:
+        except:
             print(colored("Youtube audio couldn't be downloaded. Skipping for now.", "red", attrs=["dark"]))
-            print(colored(e, "red", attrs=["dark"]))
         
         
         
