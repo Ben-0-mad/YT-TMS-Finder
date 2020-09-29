@@ -41,39 +41,45 @@ The necessary code was already available, I just made them work together.
 
 ```bat
 Ben-0-mad> python find_stable.py
-
 Welcome to
 
 
-$$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\                    
-\__$$  __|$$$\    $$$ |$$  __$$\       $$  __$$\ \__|                $$ |                    
-   $$ |   $$$$\  $$$$ |$$ /  \__|      $$ /  \__|$$\ $$$$$$$\   $$$$$$$ | $$$$$$\   $$$$$$\  
-   $$ |   $$\$$\$$ $$ |\$$$$$$\        $$$$\     $$ |$$  __$$\ $$  __$$ |$$  __$$\ $$  __$$\ 
+$$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\
+\__$$  __|$$$\    $$$ |$$  __$$\       $$  __$$\ \__|                $$ |
+   $$ |   $$$$\  $$$$ |$$ /  \__|      $$ /  \__|$$\ $$$$$$$\   $$$$$$$ | $$$$$$\   $$$$$$\
+   $$ |   $$\$$\$$ $$ |\$$$$$$\        $$$$\     $$ |$$  __$$\ $$  __$$ |$$  __$$\ $$  __$$\
    $$ |   $$ \$$$  $$ | \____$$\       $$  _|    $$ |$$ |  $$ |$$ /  $$ |$$$$$$$$ |$$ |  \__|
    $$ |   $$ |\$  /$$ |$$\   $$ |      $$ |      $$ |$$ |  $$ |$$ |  $$ |$$   ____|$$ |
-   $$ |   $$ | \_/ $$ |\$$$$$$  |      $$ |      $$ |$$ |  $$ |\$$$$$$$ |\$$$$$$$\ $$ |      
-   \__|   \__|     \__| \______/       \__|      \__|\__|  \__| \_______| \_______|\__|      
+   $$ |   $$ | \_/ $$ |\$$$$$$  |      $$ |      $$ |$$ |  $$ |\$$$$$$$ |\$$$$$$$\ $$ |
+   \__|   \__|     \__| \______/       \__|      \__|\__|  \__| \_______| \_______|\__|
 
 
 example url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 
 
 Please enter the channel url: https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
+sqlite - connection opened
 
-DevTools listening on ws://127.0.0.1:16892/devtools/browser/8f88a074-8217-418e-8427-73d92bfbe962
+DevTools listening on ws://127.0.0.1:36749/devtools/browser/c974ddad-0534-4ee7-9f82-50c47379fae2
 
-n2i-22aBC3E 0:07
-Song with id n2i-22aBC3E is less than 3 minutes! (0)
+Song with id n2i-22aBC3E is less than 4 minutes! (0:07)
 Downloading mp3...
 This is Michael HD.mp3 downloaded, now performing fingerprint match scan. Please wait...
-mp3 deleted
+mp3 deleted.
 
-Id75WC1yWXg 2:57
-Song with id Id75WC1yWXg is less than 3 minutes! (2)
+Song with id Id75WC1yWXg is less than 4 minutes! (2:57)
 Downloading mp3...
 Cursed Images with The Most Mysterious Song on the Internet playing.mp3 downloaded, now performing fingerprint match scan. Please wait...
 POSSIBLE MATCH FOUND!
-mp3 deleted
+mp3 deleted.
+
+[[ output trunacted ]]
+
+Song with id MHuVePv1Pxo is less than 4 minutes! (0:26)
+Downloading mp3...
+PaRappa's silly fun family friendly adventures of happiness - Episode 1.mp3 downloaded, now performing fingerprint match scan. Please wait...
+mp3 deleted.
+sqlite - connection has been closed
 ```
 
 ## Any problems might arise due to
