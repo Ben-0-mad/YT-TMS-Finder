@@ -25,7 +25,7 @@ The necessary code was already available, I just made them work together.
 ```
 4. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created so you don't have to check the progress constantly.
 
-If the program doesn't work right away please check the problems section of this README and especially the part about ffmpeg not being installed!
+If the program doesn't work right away you probably don't have ffmpeg installed, so please check the problems section of this README and especially the part about ffmpeg not being installed where I explain how to install it with one simple command.
 
 If the program still doesn't work right away, use this:
 5. Download the youtube-dl folder from [this google drive](https://drive.google.com/drive/folders/1kw1Wk-YJmki5malOPy1WIxS_dWkRqJeE?usp=sharing) (These files could not be uploaded to the github page since they're too big.)
