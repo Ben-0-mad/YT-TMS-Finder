@@ -33,7 +33,10 @@ def get_arguments():
 
 args = get_arguments()
 
-
+if not os.path.isdir("downlaoded_mp3s"):
+    os.mkdir("downloaded_mp3s")
+else:
+   None
 
 class Finder:
     def __init__(self, channel_url):
