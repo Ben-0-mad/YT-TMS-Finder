@@ -1,7 +1,7 @@
 import os                               #for various things
 from webbot import Browser              #for getting html source of channel
 from time import sleep                  #to prevent errors
-import re                       
+import re                               #specifcally for code in line 111
 import bs4 as bs                        #for working with html source file
 import subprocess                       #calling other script or executables from this file
 from libs.db_sqlite import SqliteDatabase #for working with the SQL database
