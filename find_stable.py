@@ -33,7 +33,7 @@ def get_arguments():
 
 args = get_arguments()
 
-if not os.path.isdir("downlaoded_mp3s"):
+if not os.path.isdir("downloaded_mp3s"):
     os.mkdir("downloaded_mp3s")
 else:
    None
