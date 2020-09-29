@@ -104,10 +104,6 @@ class Finder:
         return source
         
     def check_file(self, fpath, thresh=100):
-        # TODO: This is an unnecessary and costly subprocess call. The
-        # recognize_from_file module should simply be imported instead.
-        #output = subprocess.check_output(["python", self.file_recogniser_path, fpath])
-
         matches = run_recognition(fpath)
         song = align_matches(self.sql, matches)
         return song["CONFIDENCE"] >= thresh
