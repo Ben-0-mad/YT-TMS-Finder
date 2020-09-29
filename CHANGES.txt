@@ -1,0 +1,44 @@
+* Move statements to `if __name__ == "__main__"` block.
+* Remove .pyc files.
+* Pass channel url as a command line argument instead of interactive input.
+* Pass `ignore` as an argument to the Finder constructor.
+* Rename `recognize-from-file.py` to `recognize_from_file.py`; replacing the
+  hyphens with underscores allows it to be imported.
+* Ensure PEP-8 79 character line length compliance.
+* Fix channel URL parsing and URL construction.
+* Add Unix youtube_dl binary to repo.
+* Check for OS and set youtube_dl binary to youtube-dl.exe if win32,
+  else youtube-dl.
+* Replace webbot with raw selenium commands (addresses issues with Chromium
+  compatibility on Ubuntu 18.04).
+* Add sleep between page scrolls to ensure page has time to load.
+* Clean up and "Pythonify" procedure for obtaining video ids by using re module.
+* Use "html.parser" instead of "lxml" BeautifulSoup Parser (cuts down on
+  a dependency by removing the need for lxml).
+* Rename and add methods as needed to match and compartmentalize their functionality.
+* Rename get_channel_ids() to get_channel_source().
+* Break up check_channel() functionality into check_channel() and get_videos().
+* Add get_videos() method that obtains video ids and returns video id with
+  duration in seconds. It is now up to the caller to filter videos
+  based on duration.
+* Clean up video duration parsing; account for hours.
+* Remove global args variable; make these arguments to Finder constructor instead.
+* Use subprocess.run instead of os.system.
+* Calling youtube-dl and then os.listdir(...)[0] is an unreliable method of
+  getting the name of the downloaded file, and is also not suitable for
+  multithreading/multiprocessing in the future. Instead, remove quiet "-q"
+  flag in subprocess.run command and parse stdout for filename.
+* Have get_song_mp3() method return filepath for downloaded mp3 file.
+* Make verbose/`print_output` defaults be False.
+* Temporarily comment out undesirable print statements; these can be re-added
+  properly later as logging messages or global verbose options.
+* Remove unnecessary and costly subprocess call to recognize_from_file.
+  Replace with an import and call functions directly.
+* Return matches from recognize_from_file.run_recognition() instead of calling
+  print_match_results()
+* Import libs.utils.align_matches in find_stable.py and call align_matches()
+  directly on matches from run_recognition().
+* Update requirements.txt.
+* Reorganize top-level imports in find_stable.py per PEP standards.
+* Have check_file() return True if confidence exceeds threshold.
+  Write changes to MATCHES.txt in the method's caller.
