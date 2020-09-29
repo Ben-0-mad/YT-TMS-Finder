@@ -37,7 +37,7 @@ If the program still doesn't work right away, use this:
 
 ## Updates
 
-### V1.0.1-alpha
+### V1.0.1-alpha.1
 - Bug fix
 
 ### V1.0.1
