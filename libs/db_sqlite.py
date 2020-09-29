@@ -20,14 +20,14 @@ class SqliteDatabase(Database):
 
         self.cur = self.conn.cursor()
 
-        print(colored("sqlite - connection opened", "white", attrs=["dark"]))
+        print(colored("sqlite - connection opened", "yellow", attrs=["dark"]))
 
     def __del__(self):
         self.conn.commit()
         self.conn.close()
         print(
             colored(
-                "sqlite - connection has been closed", "white", attrs=["dark"]
+                "sqlite - connection has been closed", "yellow", attrs=["dark"]
             )
         )
 
