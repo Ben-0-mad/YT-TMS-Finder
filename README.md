@@ -15,17 +15,19 @@ The necessary code was already available, I just made them work together.
 ## How to set up (please read)
 
 1. Make sure you have python 3 installed.
-1. Download the youtube-dl folder from [this google drive](https://drive.google.com/drive/folders/1kw1Wk-YJmki5malOPy1WIxS_dWkRqJeE?usp=sharing) (These files could not be uploaded to the github page since they're too big.)
-1. Move the just downloaded youtube-dl folder into the YT-TMS-Finder folder.
 1. Open a command prompt and install the requirements:
 ```
 > pip install -r requirements.txt
 ```
-5. Now run
+1. Now run
 ```
 > python find_stable.py
 ```
-6. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created so you don't have to check the progress constantly.
+1. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created so you don't have to check the progress constantly.
+
+If the program doesn't work right away, use this:
+1. Download the youtube-dl folder from [this google drive](https://drive.google.com/drive/folders/1kw1Wk-YJmki5malOPy1WIxS_dWkRqJeE?usp=sharing) (These files could not be uploaded to the github page since they're too big.)
+1. Move the just downloaded youtube-dl folder into the YT-TMS-Finder folder.
 
 ## Note
 
