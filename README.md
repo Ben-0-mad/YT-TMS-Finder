@@ -81,6 +81,13 @@ sudo apt install ffmpeg
 
 ## Updates
 
+### V1.0.3
+- Speedmode: use ```-s``` (it uses only the first 30 seconds of a video to do the audio recognition on)
+- Verbosity: use ```-v``` (recommended)
+- Now tells you how far the progress is.
+- Bug fixes.
+
+
 ### V1.0.2
 - Channel url can now also be given as command line argument (supply ```-c CHANNEL_URL```)
 
