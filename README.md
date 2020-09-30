@@ -12,7 +12,7 @@ The necessary code was already available, I just made them work together.
 - Credit to the makers of youtube-dl
 - Special thanks and credit to Itspoma, the creator of the audio fingerprinting and recognition code.
 
-## How to set up on Windows (please read)
+## How to set up on Windows
 
 1. Make sure you have python 3 installed.
 1. Open a command prompt and install the requirements:
@@ -42,6 +42,31 @@ Then open up a command prompt (press Windows key and type CMD). Navigate to the 
 ```
 
 9. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created so you don't have to check the progress constantly.
+
+
+## How to set up on Linux
+
+1. Make sure you have python 3 installed.
+1. Open a command prompt and install the requirements:
+```
+$ pip install -r requirements.txt
+```
+3. Do you have problems installing PyAudio? Please skip to the next step.
+
+4. Installing ffmpeg:
+```sudo apt install software-properties-common
+sudo apt update
+sudo add-apt-repository ppa:jonathonf/ffmpeg-4
+sudo apt install ffmpeg```
+
+5. In case you have any problems with installing PyAudio, please check out [this](https://stackoverflow.com/questions/20023131/cannot-install-pyaudio-gcc-error)
+
+6. To install the chromedriver on linux: please go see [here](https://makandracards.com/makandra/29465-install-chromedriver-on-linux)
+
+7. ```
+$ python find_stable.py
+```
+
 
 ## Note
 
