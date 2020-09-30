@@ -75,7 +75,7 @@ $ python find_stable.py
 ## Updates
 
 ### V1.0.2
-- Channel url can now also be given as command line argument (supply ```-c https://youtube.com/channel/123456789```)
+- Channel url can now also be given as command line argument (supply ```-c CHANNEL_URL```)
 
 ### V1.0.1-alpha.1
 - Bug fix
