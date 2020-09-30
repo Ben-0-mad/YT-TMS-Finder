@@ -6,10 +6,10 @@ from pathlib import Path
 
 from libs.reader_file import FileReader
 from libs.db_sqlite import SqliteDatabase
-from libs.utils import logmsg, find_matches, align_matches
+from libs.utils import logmsg, find_matches, print_match_results
 
 
-def run_recognition(filename, print_output=False):
+def run_recognition(filename, print_output=True):
     db = SqliteDatabase()
 
     abs_filename = os.path.abspath(filename)
@@ -24,24 +24,23 @@ def run_recognition(filename, print_output=False):
 
     for channeln, channel in enumerate(data["channels"]):
         # TODO: Remove prints or change them into optional logging.
-        #if print_output:
-            #msg = "   fingerprinting channel %d/%d"
-            #print(
-            #    logmsg(msg, attrs=["dark"], prefix=filename)
-            #    % (channeln + 1, channel_amount)
-            #)
+        if print_output:
+            msg = "   fingerprinting channel %d/%d"
+            print(
+                logmsg(msg, attrs=["dark"], prefix=filename)
+                % (channeln + 1, channel_amount)
+            )
 
         matches.extend(find_matches(db, channel, Fs, filename, print_output))
 
-        #if print_output:
-            #msg = "   finished channel %d/%d, got %d hashes"
-            #print(
-            #    logmsg(msg, attrs=["dark"], prefix=filename)
-            #    % (channeln + 1, channel_amount, len(matches))
-            #)
+        if print_output:
+            msg = "   finished channel %d/%d, got %d hashes"
+            print(
+                logmsg(msg, attrs=["dark"], prefix=filename)
+                % (channeln + 1, channel_amount, len(matches))
+            )
 
-    #print_match_results(db, matches, filename)
-    return matches
+    print_match_results(db, matches, filename)
 
 
 def run_recognition_scan_dir(dirname):

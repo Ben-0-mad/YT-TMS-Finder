@@ -115,14 +115,15 @@ def align_matches(db, matches):
 
 
 def print_match_results(db, matches, filename=None):
+    print("")
     total_matches_found = len(matches)
 
     if total_matches_found > 0:
-        #msg = " ** found %d total hash matches"
-        #print(
-        #    logmsg(msg, "green", prefix=filename)
-        #    % total_matches_found
-        #)
+        msg = " ** found %d total hash matches"
+        print(
+            logmsg(msg, "green", prefix=filename)
+            % total_matches_found
+        )
 
         song = align_matches(db, matches)
 
@@ -135,17 +136,16 @@ def print_match_results(db, matches, filename=None):
             with open("log.txt","+a") as f:
                 f.write("MATCH FOUND ON THIS CHANNEL OMG PLEASE GO CHECK")
 
-        #print(
-        #    logmsg(msg, "green", prefix=filename)
-        #    % (
-        #        song["SONG_NAME"],
-        #        song["SONG_ID"],
-        #        song["OFFSET"],
-        #        song["OFFSET_SECS"],
-        #        song["CONFIDENCE"],
-        #    )
-        #)
+        print(
+            logmsg(msg, "green", prefix=filename)
+            % (
+                song["SONG_NAME"],
+                song["SONG_ID"],
+                song["OFFSET"],
+                song["OFFSET_SECS"],
+                song["CONFIDENCE"],
+            )
+        )
     else:
-        #msg = " ** no matches found"
-        #print(logmsg(msg, "red", prefix=filename))
-        pass
+        msg = " ** no matches found"
+        print(logmsg(msg, "red", prefix=filename))
