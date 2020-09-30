@@ -1,3 +1,4 @@
+beautifulsoup4
 numpy>=1
 scipy
 matplotlib
@@ -8,4 +9,4 @@ wave
 pydub
 black
 flake8
-webbot
+selenium
