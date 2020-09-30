@@ -34,23 +34,41 @@ example url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 
 
 class Finder:
-    def __init__(self, channel_url, ignore_checked):
-        ### Check if the channel url is in right format
-        expr = r"^.*(/c(hannel)?/[a-zA-Z0-9-_]+)"
-        channel_path_match = re.match(expr, channel_url)
-        
-        if channel_path_match is None:
-            raise ValueError("Malformed URL, please give a valid URL.")
-            
-        channel_path = channel_path_match.groups()[0]
-        self.channel_url = "https://www.youtube.com" + channel_path + "/videos"
-        
-        ### For using sql to interact with db file (the database)
+    def __init__(self, channel_url, arguments):
+        ### setting variables
         self.sql = SqliteDatabase()
-        self.ignore_checked = ignore_checked
-        self.channel_url = channel_url.replace('featured','videos')
-        self.file_recogniser_path = os.path.join(os.getcwd(), "recognize-from-file.py")
         
+        self.ignore_checked = arguments.ignore
+        self.verbose = arguments.verbose
+        self.speedmode = arguments.speedmode
+        self.vprint(str(arguments), "yellow")
+        
+        ### Make sure we have this folder
+        if not os.path.isdir("downloaded_mp3s"):
+            os.mkdir("downloaded_mp3s")
+        
+        ### Check if the channel url is in right format
+        expr_channel = r"^.*(/c(hannel)?/[a-zA-Z0-9-_]+)"
+        expr_user    = r"^.*(/u(ser)?/[a-zA-Z0-9-_]+)"
+        channel_path_match = re.match(expr_channel, channel_url)
+        user_path_match = re.match(expr_user, channel_url)
+        
+        if channel_path_match is None and user_path_match is None:
+            raise ValueError("Malformed URL, please give a valid URL.")
+        elif channel_path_match is not None:
+            channel_path = channel_path_match.groups()[0]
+            self.channel_url = "https://www.youtube.com" + channel_path + "/videos"
+        else:
+            channel_path = user_path_match.groups()[0]
+            self.channel_url = "https://www.youtube.com" + channel_path + "/videos"
+        
+    
+    def vprint(self, text: str, colour:str = "white"):
+        """
+        Helpful function for printing when verbose is turned on
+        """
+        if self.verbose:
+            cprint(text, colour)
     
     def get_song_mp3(self, id: str) -> None:
         """
@@ -59,8 +77,79 @@ class Finder:
         
         ### Delete existing mp3 files in downloaded_mp3s directory in case there is one left of a previous run
         self.delete_mp3s()
-        print("")
-        print("Downloading mp3...")
+        self.vprint("\nDownloading mp3...")
+        url = "https://youtube.com/watch?v=" + id
+        
+        dir_here = os.path.abspath(os.getcwd())
+        dir_youtube_dl_dir = os.path.join(dir_here, "youtube-dl")
+        
+        ### Set youtube-dl exectuable for windows and linux users
+        if sys.platform == "win32":
+            youtube_dl_exec = "youtube-dl.exe"
+        else:
+            youtube_dl_exec = "youtube-dl"
+        path_youtube_dl_exec = os.path.join(dir_youtube_dl_dir, youtube_dl_exec)
+        
+        ### initialise this variable to make the destination argument for the youtube-dl command
+        dir_downloaded_mp3s = os.path.join(dir_here, "downloaded_mp3s")
+    
+        ### '%(title)s.%(ext)s' comes from how youtube-dl.exe outputs files with 
+        ### filename as youtube title
+        destination_arg = os.path.join(dir_downloaded_mp3s, "%(title)s.%(ext)s")
+        
+        ### Make the mp3 folder which will contain a downloaded mp3
+        if not os.path.isdir(dir_downloaded_mp3s):
+            os.mkdir(dir_downloaded_mp3s)
+        
+        cmd = [
+            f"{path_youtube_dl_exec}", "-x", "--audio-format", "mp3",
+            "--no-warnings", "-o", f"{destination_arg}", f"{url}"
+        ]
+        try:
+            proc = subprocess.run(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+            sleep(0.1)
+            self.songname = os.listdir("downloaded_mp3s")[0]
+            self.vprint(f"{os.listdir('downloaded_mp3s')[0]} with id {id} downloaded, now performing fingerprint match scan. Please wait...")
+        except KeyboardInterrupt:
+            ### completely exit program if this is what user wants
+            exit()
+        except:
+            ### always show error even when verbose is off
+            cprint("Youtube audio couldn't be downloaded. Skipping for now.", "red")
+            ### when return value is None, we go to the next song to check (see code in line 326)
+            return None
+        
+
+        # Convert stdout to UTF-8 string from bytes.
+        # TODO: test Windows compatibility?
+        # Greek letters not supported for commented out part!!
+        '''
+        stdout = proc.stdout.decode("utf-8")
+        expr = r"\[ffmpeg\] Destination: (.*\.mp3).*"
+        match = re.search(expr, stdout)
+
+        if proc.stderr or not match:
+            return None
+        
+        song_fpath = match.groups()[0]
+        
+        
+        print(f"\n\n{stdout}\n===\n{expr}\n===\n{match}\n===\n{match.groups()}\n\n")
+        exit()
+        return song_fpath
+        '''
+        
+        ### This does support greek letters even though it may not be the best way to do it.
+        return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
+    
+    
+    def get_song_mp3_speedmode(self, id):
+        ### Delete existing mp3 files in downloaded_mp3s directory in case there is one left of a previous run
+        self.delete_mp3s()
+        self.vprint("")
+        self.vprint("Downloading mp3...")
         url = "https://youtube.com/watch?v=" + id
         
         dir_here = os.path.abspath(os.getcwd())
@@ -85,60 +174,35 @@ class Finder:
         if not os.path.isdir(dir_downloaded_mp3s):
             os.mkdir(dir_downloaded_mp3s)
         
-        cmd = [
-            f"{path_youtube_dl_exec}", "-x", "--audio-format", "mp3",
-            "--no-warnings", "-o", f"{destination_arg}", f"{url}"
-        ]
+        cmd = [f"{path_youtube_dl_exec}", "-x", "--postprocessor-args", "\"-ss 00:00:00.00 -t 00:00:30.00\"", f"{url}", "--audio-format", "mp3", "-o", f"{destination_arg}"]
+        
+                
         try:
-            proc = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            sleep(0.1)
-            self.songname = os.listdir("downloaded_mp3s")[0]
-            print(f"{os.listdir('downloaded_mp3s')[0]} downloaded, now performing fingerprint match scan. Please wait...")
+            subprocess.check_output(' '.join(cmd))
+        except KeyboardInterrupt:
+            exit()
         except:
+            ### always show error even when verbose is off
             cprint("Youtube audio couldn't be downloaded. Skipping for now.", "red")
-        
-
-        # Convert stdout to UTF-8 string from bytes.
-        # TODO: test Windows compatibility?
-        stdout = proc.stdout.decode("utf-8")
-        expr = r"\[ffmpeg\] Destination: (.*\.mp3).*"
-        match = re.search(expr, stdout)
-
-        if proc.stderr or not match:
             return None
+        sleep(0.1)
+        self.songname = os.listdir("downloaded_mp3s")[0]
+        self.vprint(f"{os.listdir('downloaded_mp3s')[0]} with id {id} downloaded, now performing fingerprint match scan. Please wait...")
+        
+        
+        ### This does support greek letters even though it may not be the best way to do it.
+        sleep(0.3)
+        return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
 
-        song_fpath = match.groups()[0]
-        return song_fpath
-        
-    def get_song_mp3_speedmode(self, id):
-        """
-        Downloads the audio from a youtube video in mp3 format given a video id.
-        """
-        self.delete_mp3s()
-        print("Downloading mp3...")
-        url = "https://youtube.com/watch?v=" + id
-        dir_here = os.path.abspath(os.getcwd())
-        dir_youtube_dl_dir = os.path.join(dir_here, "youtube-dl")
-        path_youtube_dl_exec = os.path.join(dir_youtube_dl_dir, "youtube-dl.exe")
-        dir_mp3s = os.path.join(dir_here, "downloaded_mp3s")
-        
-        
-        streams = subprocess.check_output(f"{path_youtube_dl_exec} -g https://www.youtube.com/watch?v={id}").decode()
-        try:
-            audio_stream = streams.split("\n")[1]
-            if not os.path.isdir(dir_mp3s):
-                os.mkdir(dir_mp3s)
-            _ = subprocess.check_output(f"ffmpeg -hide_banner -loglevel warning -i \"{audio_stream.strip()}\" -t 00:00:30.00 -c copy downloaded_mp3s\out.mp4")
-            sleep(0.1)
-            _ = subprocess.check_output(f"ffmpeg -hide_banner -loglevel warning -i downloaded_mp3s\out.mp4 downloaded_mp3s\out.mp3")
-            sleep(0.1)
-            self.songname = os.listdir("downloaded_mp3s")[0]
-            os.remove("downloaded_mp3s\out.mp4")
-        except IndexError:
-            cprint("Video streams could not be obtained. Skipping for now.", "red")
-        
+
+    """
+    It may be possible to merge the previous two download functions and 
+    I would like to do that 
+    but due to a small change in calling the youtube-dl.exe command 
+    it's got to be like this for now.
+    """
+    
+    
     def delete_mp3s(self):
         """
         Deletes all mp3s in the mp3s folder.
@@ -147,7 +211,8 @@ class Finder:
         for file in os.listdir("downloaded_mp3s"):
             full_path = os.path.join(current_directory, "downloaded_mp3s", file)
             os.remove(full_path)
-            print("mp3 deleted.")
+            self.vprint("mp3 deleted.")
+    
     
     def get_channel_source(self):
         ### Open a browser
@@ -167,23 +232,16 @@ class Finder:
         
         return source
         
-    def check_file(self, fpath, thresh=100):
-        '''
+    def check_file(self, fpath, thresh=40):
+        """
         Fingerprint and try to match a song against database
-        '''
+        """
         
         matches = run_recognition(fpath)
         song = align_matches(self.sql, matches)
         return song["CONFIDENCE"] >= thresh
+    
         
-        '''
-        output = subprocess.check_output(['python', self.file_recogniser_path, os.path.join(os.getcwd(), "downloaded_mp3s", self.songname )])
-        if "POSSIBLE MATCH FOUND" in output.decode():
-            print(colored("POSSIBLE MATCH FOUND!", "green", attrs=["dark"]))
-            with open("MATCHES.txt", "a") as f:
-                f.write(f"{self.songname} with YT ID {self.id} has a match with the database!\n")
-        '''
-            
     def get_videos(self, source):
         """
         Exract video ids and durations from channel video page source
@@ -243,7 +301,9 @@ class Finder:
         source = self.get_channel_source()
         videos = self.get_videos(source)
         
-        for video in videos:
+        total_videos = len(videos)
+        
+        for (video, index) in zip(videos, range(total_videos)):
             id_ = video["id"]
             
             '''
@@ -261,20 +321,34 @@ class Finder:
             or 
             (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(id_)))):
                 
-                song_fpath = self.get_song_mp3(id_)
+                ### download the song
+                if not self.speedmode:
+                    song_fpath = self.get_song_mp3(id_)
+                else:
+                    song_fpath = self.get_song_mp3_speedmode(id_)
+                
+                ### we skip this song if something went wrong with the download
+                if song_fpath is None:
+                    ### Skip to the next video in the for loop
+                    continue 
+                
                 try:
                     possible_match = self.check_file(song_fpath)
+                    self.vprint(f"{100*index/total_videos:.2f}% done")
                     self.sql.add_checked_id(id_)
-                except:
+                except IndexError:
                     cprint("Something went wrong, probably a weird youtube title. Skipping for now.", "red")
+                    continue
+                except KeyboardInterrupt:
+                    exit()
                 
                 if possible_match:
-                    cprint("Possible match found", "green")
+                    self.vprint("Possible match found", "green")
                     
                     song_fname = os.path.split(song_fpath)[1]
                     
                     with open("MATCHES.txt", "a") as f:
-                        f.write(f"{id_} {song_fname}")
+                        f.write(f"{song_fname} with YT ID {id_} has a match with the database! Oh my lawd please check it\n")
             self.delete_mp3s()
 
 
@@ -292,10 +366,6 @@ def get_arguments():
 if __name__ == '__main__':
     args = get_arguments()
     
-    ### Make sure we have this folder
-    if not os.path.isdir("downloaded_mp3s"):
-        os.mkdir("downloaded_mp3s")
-    
     ### Check channel argument
     if args.channel_url is None:
         channel_url = input("\nPlease enter the channel url: ")   #Example input: www.youtube.com/c/GlitchxCity/featured
@@ -305,5 +375,5 @@ if __name__ == '__main__':
     ### initialise colored text
     colorama.init()
     
-    finder = Finder(channel_url, args.ignore)
+    finder = Finder(channel_url, args)
     finder.check_channel()
