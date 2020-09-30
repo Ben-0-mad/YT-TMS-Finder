@@ -65,10 +65,7 @@ sudo apt install ffmpeg
 
 6. To install the chromedriver on linux: please go see [here](https://makandracards.com/makandra/29465-install-chromedriver-on-linux)
 
-7. 
-```
-$ python find_stable.py
-```
+7. ```$ python find_stable.py```
 
 
 ## Note
