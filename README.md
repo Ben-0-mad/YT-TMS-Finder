@@ -14,9 +14,12 @@ The necessary code was already available, I just made them work together.
 - Thanks to nrsyed for helping with code optimisation.
 
 ## How to use
-1. Use ```python find_stable.py -i``` to ignore already checked videos.
-1. Use ```python find_stable.py -c CHANNEL_URL``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
-1. Use ```python find_stable.py -h``` for the help message.
+usage: ```find_stable.py [-h] [-i] [-s] [-v] [-c CHANNEL_URL]```
+1. ```-c CHANNEL_URL``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
+1. ```-i``` ignore videos that were checked in another session already.
+1. ```-s``` download only first 30 seconds of video. This speeds up the download and fingerprinting.
+1. ```-v``` for verbosity.
+1. ```-h``` for the help message.
 
 ## How to set up on Windows
 
