@@ -12,6 +12,11 @@ The necessary code was already available, I just made them work together.
 - Credit to the makers of youtube-dl
 - Special thanks and credit to Itspoma, the creator of the audio fingerprinting and recognition code.
 
+## How to use
+1. Use ```python find_stable.py -i``` to ignore already checked videos.
+1. Use ```python find_stable.py -c CHANNEL_URL``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
+1. Use ```python find_stable.py -h``` for the help message.
+
 ## How to set up on Windows
 
 1. Make sure you have python 3 installed.
@@ -71,6 +76,7 @@ sudo apt install ffmpeg
 ## Note
 
 - In case you do ```> python reset-database.py```, simply do ```python collect-fingerprints-from-songs.py```.
+- verbosity update and speedmode update coming soon.
 
 ## Updates
 
