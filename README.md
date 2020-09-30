@@ -82,7 +82,7 @@ sudo apt install ffmpeg
 
 ### V1.0.1
 - Option to ignore previously tried videos. This is useful in case the process unexpectedly ends and you want to continue where you left off.
-- Speedmode available in v1.0.2
+- Speedmode available in v1.0.3
 
 ## Example
 
