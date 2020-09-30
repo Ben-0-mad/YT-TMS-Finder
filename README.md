@@ -19,9 +19,7 @@ The necessary code was already available, I just made them work together.
 ```
 > pip install -r requirements.txt
 ```
-3. Do you have problems installing PyAudio? This is a common issue. The solution to downloading PyAudio if the normal ```pip install pyaudio``` fails, is this:
-Go to https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio and download the .whl file for your version of python.
-Then open up a command prompt (press Windows key and type CMD). Navigate to the folder with the .whl file and do ```pip install pip install PyAudio-0.2.11-cp37-cp37m-win_amd64.whl``` or whatever .whl file suits your version of python. Now you have it installed.
+3. Do you have problems installing PyAudio? Please skip to the next step.
 
 4. To make the installation easier, we'll use chocolately which is jus tlike brew, pip, or other module utilities. Open up powershell in the administrator mode:
 ```@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin" ```
@@ -34,11 +32,16 @@ Then open up a command prompt (press Windows key and type CMD). Navigate to the 
 6. In order to download audio from YouTube we'll need ffmpeg. We'll download this now. If you already have ffmpeg you can skip this step. In the same powershell window, run:
 ``` choco install ffmpeg -y```
 
-7. Now run
+7. If you had any problems with installing PyAudio, that's a common issue. The solution to downloading PyAudio if the normal ```pip install pyaudio``` fails, is this:
+Go to https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio and download the .whl file for your version of python.
+Then open up a command prompt (press Windows key and type CMD). Navigate to the folder with the .whl file and do ```pip install pip install PyAudio-0.2.11-cp37-cp37m-win_amd64.whl``` or whatever .whl file suits your version of python. Now you have it installed.
+
+8. Now run
 ```
 > python find_stable.py
 ```
-8. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created so you don't have to check the progress constantly.
+
+9. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created so you don't have to check the progress constantly.
 
 ## Note
 
