@@ -164,7 +164,7 @@ class Finder:
             id_ = video["id"]
             if (
                 (not self.ignore_checked or not self.sql.in_checked_ids(id_))
-                and video["duration"] < max_duration
+                and video["duration"] <= max_duration
             ):
                 song_fpath = self.get_song_mp3(id_)
                 possible_match = self.check_file(song_fpath)
