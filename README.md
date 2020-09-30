@@ -132,7 +132,7 @@ sqlite - connection has been closed
 ## Any problems might arise due to
 1. Python not being recognised as internal command. FIX by adding python interpreter folder to the PATH variable)
 
-1. Problem with Selenium and chromedriver. Please do step 3 and 4 of the setup!
+1. Problem with Selenium and chromedriver. For Windows please do step 3 and 4 of the setup!
 
 1. Problem with ffmpeg.
 
