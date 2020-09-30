@@ -11,6 +11,7 @@ The necessary code was already available, I just made them work together.
 ## Credits:
 - Credit to the makers of youtube-dl
 - Special thanks and credit to Itspoma, the creator of the audio fingerprinting and recognition code.
+- Thanks to nrsyed for helping with code optimisation.
 
 ## How to use
 1. Use ```python find_stable.py -i``` to ignore already checked videos.
