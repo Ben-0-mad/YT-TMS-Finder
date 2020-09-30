@@ -12,24 +12,33 @@ The necessary code was already available, I just made them work together.
 - Credit to the makers of youtube-dl
 - Special thanks and credit to Itspoma, the creator of the audio fingerprinting and recognition code.
 
-## How to set up (please read)
+## How to set up on Windows (please read)
 
 1. Make sure you have python 3 installed.
 1. Open a command prompt and install the requirements:
 ```
 > pip install -r requirements.txt
 ```
-3. Now run
+Note that if you have problems with installing PyAudio, this is a common issue. The solution to downloading PyAudio if the normal ```pip install pyaudio``` fails, is this:
+Go to https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio and download the .whl file for your version of python.
+Then open up a command prompt (press Windows key and type CMD). Navigate to the folder with the .whl file and do ```pip install pip install PyAudio-0.2.11-cp37-cp37m-win_amd64.whl``` or whatever .whl file suits your version of python. Now you have it installed.
+
+3. To make the installation easier, we'll use chocolately which is jus tlike brew, pip, or other module utilities. Open up powershell in the administrator mode:
+```@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin" ```
+
+![](https://i.ibb.co/syRXXbB/powrrshell-setup.png)
+
+4. Great now you have Chocolately installed. Next we'll install the chromedriver. If you already have the chromedriver you can skip this step. In the same powershell window, run:
+``` choco install chromedriver  ```
+
+5. In order to download audio from YouTube we'll need ffmpeg. We'll download this now. If you already have ffmpeg you can skip this step. In the same powershell window, run:
+``` choco install ffmpeg -y```
+
+6. Now run
 ```
 > python find_stable.py
 ```
-4. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created so you don't have to check the progress constantly.
-
-If the program doesn't work right away you probably don't have ffmpeg installed, so please check the problems section of this README and especially the part about ffmpeg not being installed where I explain how to install it with one simple command.
-
-If the program still doesn't work right away, use this:
-5. Download the youtube-dl folder from [this google drive](https://drive.google.com/drive/folders/1kw1Wk-YJmki5malOPy1WIxS_dWkRqJeE?usp=sharing) (These files could not be uploaded to the github page since they're too big.)
-6. Move the just downloaded youtube-dl folder into the YT-TMS-Finder folder.
+7. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created so you don't have to check the progress constantly.
 
 ## Note
 
@@ -91,10 +100,10 @@ sqlite - connection has been closed
 
 ## Any problems might arise due to
 1. Python not being recognised as internal command. FIX by adding python interpreter folder to the PATH variable)
-1. ffmpeg not being installed. FIX by opening powershell in administrator mode, then in this shell do 
-```@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin" ``` and then ```choco install -y ffmpeg``` afterwards. You can check that ffmpeg is installed by doing ```choco search ffmpeg```.
 
 1. Sqlite3 is not an installed module in python 3. FIX by opening a command prompt and doing `pip install sqlite3`
+
+1. Problem with Selenium and chromedriver. Please do step 3 and 4 of the setup!
 
 ## FAQ
 - How to check a youtube channel?
