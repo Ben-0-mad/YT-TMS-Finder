@@ -54,16 +54,19 @@ $ pip install -r requirements.txt
 3. Do you have problems installing PyAudio? Please skip to the next step.
 
 4. Installing ffmpeg:
-```sudo apt install software-properties-common
+```
+sudo apt install software-properties-common
 sudo apt update
 sudo add-apt-repository ppa:jonathonf/ffmpeg-4
-sudo apt install ffmpeg```
+sudo apt install ffmpeg
+```
 
 5. In case you have any problems with installing PyAudio, please check out [this](https://stackoverflow.com/questions/20023131/cannot-install-pyaudio-gcc-error)
 
 6. To install the chromedriver on linux: please go see [here](https://makandracards.com/makandra/29465-install-chromedriver-on-linux)
 
-7. ```
+7. 
+```
 $ python find_stable.py
 ```
 
