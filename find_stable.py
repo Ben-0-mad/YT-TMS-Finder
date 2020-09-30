@@ -30,7 +30,6 @@ class Finder:
 
         self.sql = SqliteDatabase()
         self.ignore_checked = ignore_checked
-        self.file_recogniser_path = os.path.join(os.getcwd(), "recognize-from-file.py")
     
     def get_song_mp3(self, id_: str) -> None:
         """
