@@ -9,3 +9,4 @@ pydub
 black
 flake8
 webbot
+sqlite3
