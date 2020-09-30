@@ -127,15 +127,16 @@ def print_match_results(db, matches, filename=None):
 
         song = align_matches(db, matches)
 
-        msg = " => song: %s (id=%d)\n"
-        msg += "    offset: %d (%d secs)\n"
-        msg += "    confidence: %d"
+        #msg = " => song: %s (id=%d)\n"
+        #msg += "    offset: %d (%d secs)\n"
+        #msg += "    confidence: %d"
 
         if song["CONFIDENCE"] >= 100:
             msg += "      POSSIBLE MATCH FOUND!"
-            with open("log.txt","+a") as f:
-                f.write("MATCH FOUND ON THIS CHANNEL OMG PLEASE GO CHECK")
-
+            #with open("log.txt","+a") as f:
+            #    f.write("MATCH FOUND ON THIS CHANNEL OMG PLEASE GO CHECK")
+        
+        '''
         print(
             logmsg(msg, "green", prefix=filename)
             % (
@@ -146,6 +147,9 @@ def print_match_results(db, matches, filename=None):
                 song["CONFIDENCE"],
             )
         )
+        '''
+        
     else:
-        msg = " ** no matches found"
-        print(logmsg(msg, "red", prefix=filename))
+        #msg = " ** no matches found"
+        #print(logmsg(msg, "red", prefix=filename))
+        pass

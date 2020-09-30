@@ -1,5 +1,6 @@
 import sqlite3
-from termcolor import colored
+from termcolor import *
+import colorama
 from libs.db import Database
 from libs.config import get_config
 from libs.utils import grouper
@@ -20,16 +21,13 @@ class SqliteDatabase(Database):
 
         self.cur = self.conn.cursor()
 
-        print(colored("sqlite - connection opened", "yellow", attrs=["dark"]))
+        cprint("sqlite - connection opened", "yellow")
 
     def __del__(self):
         self.conn.commit()
         self.conn.close()
-        print(
-            colored(
-                "sqlite - connection has been closed", "yellow", attrs=["dark"]
-            )
-        )
+        colorama.init()
+        cprint("sqlite - connection has been closed", "yellow")
 
     def query(self, query, values=[]):
         self.cur.execute(query, values)
