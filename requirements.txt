@@ -2,6 +2,7 @@ numpy>=1
 scipy
 matplotlib
 termcolor
+colorama
 cython
 pyaudio
 wave
