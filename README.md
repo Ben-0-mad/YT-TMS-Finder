@@ -30,7 +30,7 @@ usage: ```find_stable.py [-h] [-i] [-s] [-v] [-c CHANNEL_URL]```
 ```
 3. Do you have problems installing PyAudio? Please skip to the next step.
 
-4. To make the installation easier, we'll use chocolately which is jus tlike brew, pip, or other module utilities. Open up powershell in the administrator mode:
+4. To make the installation easier, we'll use chocolately which is just like brew, pip, or other module utilities. Open up powershell in the administrator mode and do this command:
 ```@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin" ```
 
 ![](https://i.ibb.co/syRXXbB/powrrshell-setup.png)
