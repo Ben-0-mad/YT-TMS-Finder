@@ -12,6 +12,9 @@ class SqliteDatabase(Database):
 
     def __init__(self):
         self.connect()
+        
+    #def sql_colour(self):
+        colorama.init()
 
     def connect(self):
         config = get_config()
@@ -26,7 +29,6 @@ class SqliteDatabase(Database):
     def __del__(self):
         self.conn.commit()
         self.conn.close()
-        colorama.init()
         cprint("sqlite - connection has been closed", "yellow")
 
     def query(self, query, values=[]):
