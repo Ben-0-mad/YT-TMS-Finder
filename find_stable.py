@@ -122,11 +122,9 @@ class Finder:
             return None
         
 
-        # Convert stdout to UTF-8 string from bytes.
+        # Convert stdout to UTF-16 string from bytes.
         # TODO: test Windows compatibility?
-        # Greek letters not supported for commented out part!!
-        '''
-        stdout = proc.stdout.decode("utf-8")
+        stdout = proc.stdout.decode("utf-16")
         expr = r"\[ffmpeg\] Destination: (.*\.mp3).*"
         match = re.search(expr, stdout)
 
@@ -134,15 +132,10 @@ class Finder:
             return None
         
         song_fpath = match.groups()[0]
-        
-        
-        print(f"\n\n{stdout}\n===\n{expr}\n===\n{match}\n===\n{match.groups()}\n\n")
-        exit()
         return song_fpath
-        '''
         
         ### This does support greek letters even though it may not be the best way to do it.
-        return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
+        #return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
     
     
     def get_song_mp3_speedmode(self, id):
