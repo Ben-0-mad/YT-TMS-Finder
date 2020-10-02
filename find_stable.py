@@ -190,7 +190,7 @@ class Finder:
         
         matches = run_recognition(fpath)
         song = align_matches(self.sql, matches)
-        self.vprint(f"Confidence of a match: {song["CONFIDENCE"]}")
+        self.vprint(f"Confidence of a match: {song['CONFIDENCE']}")
         return song["CONFIDENCE"] >= thresh
     
         
