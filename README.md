@@ -94,12 +94,12 @@ sudo apt install ffmpeg
 ### V1.0.2
 - Channel url can now also be given as command line argument (supply ```-c CHANNEL_URL```)
 
-### V1.0.1-alpha.1
-- Bug fix
-
 ### V1.0.1
 - Option to ignore previously tried videos. This is useful in case the process unexpectedly ends and you want to continue where you left off.
 - Speedmode available in v1.0.3
+
+### V1.0.1-alpha.1
+- Bug fix
 
 ## Example
 
