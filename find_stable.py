@@ -70,7 +70,7 @@ class Finder:
         if self.verbose:
             cprint(text, colour)
     
-    def get_song_mp3(self, id: str) -> None:
+    def get_song_mp3(self, id, speed_mode=False):
         """
         Downloads the audio from a youtube video in mp3 format given a video id.
         """
@@ -101,17 +101,24 @@ class Finder:
         if not os.path.isdir(dir_downloaded_mp3s):
             os.mkdir(dir_downloaded_mp3s)
         
-        cmd = [
-            f"{path_youtube_dl_exec}", "-x", "--audio-format", "mp3",
-            "--no-warnings", "-o", f"{destination_arg}", f"{url}"
-        ]
+        if speed_mode:
+            cmd = [
+                f"{path_youtube_dl_exec}", "-x",
+                "--postprocessor-args", "\"-ss 00:00:00.00 -t 00:00:30.00\"",
+                f"{url}", "--audio-format", "mp3", "-o", f"{destination_arg}"
+            ]
+        else:
+            cmd = [
+                f"{path_youtube_dl_exec}", "-x", "--audio-format", "mp3",
+                "--no-warnings", "-o", f"{destination_arg}", f"{url}"
+            ]
+
         try:
             proc = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
-            sleep(0.1)
-            self.songname = os.listdir("downloaded_mp3s")[0]
-            self.vprint(f"{os.listdir('downloaded_mp3s')[0]} with id {id} downloaded, now performing fingerprint match scan. Please wait...")
+            songname = os.listdir("downloaded_mp3s")[0]
+            self.vprint(f"{songname} with id {id} downloaded, now performing fingerprint match scan. Please wait...")
         except KeyboardInterrupt:
             ### completely exit program if this is what user wants
             exit()
@@ -143,64 +150,6 @@ class Finder:
         
         ### This does support greek letters even though it may not be the best way to do it.
         return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
-    
-    
-    def get_song_mp3_speedmode(self, id):
-        ### Delete existing mp3 files in downloaded_mp3s directory in case there is one left of a previous run
-        self.delete_mp3s()
-        self.vprint("")
-        self.vprint("Downloading mp3...")
-        url = "https://youtube.com/watch?v=" + id
-        
-        dir_here = os.path.abspath(os.getcwd())
-        dir_youtube_dl_dir = os.path.join(dir_here, "youtube-dl")
-        
-        ### Set youtube-dl exectuable for windows and linux users
-        if sys.platform == "win32":
-            youtube_dl_exec = "youtube-dl.exe"
-        else:
-            youtube_dl_exec = "youtube-dl"
-            
-        path_youtube_dl_exec = os.path.join(dir_youtube_dl_dir, youtube_dl_exec)
-        
-        
-        dir_downloaded_mp3s = os.path.join(dir_here, "downloaded_mp3s")
-    
-        ### '%(title)s.%(ext)s' comes from how youtube-dl.exe outputs files with 
-        ### filename as youtube title
-        destination_arg = os.path.join(dir_downloaded_mp3s, "%(title)s.%(ext)s")
-        
-        ### Make the mp3 folder which will contain a downloaded mp3
-        if not os.path.isdir(dir_downloaded_mp3s):
-            os.mkdir(dir_downloaded_mp3s)
-        
-        cmd = [f"{path_youtube_dl_exec}", "-x", "--postprocessor-args", "\"-ss 00:00:00.00 -t 00:00:30.00\"", f"{url}", "--audio-format", "mp3", "-o", f"{destination_arg}"]
-        
-                
-        try:
-            subprocess.check_output(' '.join(cmd))
-        except KeyboardInterrupt:
-            exit()
-        except:
-            ### always show error even when verbose is off
-            cprint("Youtube audio couldn't be downloaded. Skipping for now.", "red")
-            return None
-        sleep(0.1)
-        self.songname = os.listdir("downloaded_mp3s")[0]
-        self.vprint(f"{os.listdir('downloaded_mp3s')[0]} with id {id} downloaded, now performing fingerprint match scan. Please wait...")
-        
-        
-        ### This does support greek letters even though it may not be the best way to do it.
-        sleep(0.3)
-        return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
-
-
-    """
-    It may be possible to merge the previous two download functions and 
-    I would like to do that 
-    but due to a small change in calling the youtube-dl.exe command 
-    it's got to be like this for now.
-    """
     
     
     def delete_mp3s(self):
