@@ -37,6 +37,7 @@ class Finder:
     def __init__(self, channel_url, arguments):
         ### setting variables
         self.sql = SqliteDatabase()
+        #self.sql.sql_colour()
         
         self.ignore_checked = arguments.ignore
         self.verbose = arguments.verbose
@@ -70,7 +71,7 @@ class Finder:
         if self.verbose:
             cprint(text, colour)
     
-    def get_song_mp3(self, id: str) -> None:
+    def get_song_mp3(self, id: str) -> str:
         """
         Downloads the audio from a youtube video in mp3 format given a video id.
         """
@@ -101,17 +102,26 @@ class Finder:
         if not os.path.isdir(dir_downloaded_mp3s):
             os.mkdir(dir_downloaded_mp3s)
         
-        cmd = [
-            f"{path_youtube_dl_exec}", "-x", "--audio-format", "mp3",
-            "--no-warnings", "-o", f"{destination_arg}", f"{url}"
-        ]
+        ### Setting up the command for the different modes
+        if not self.speedmode:
+            cmd = [
+                f"{path_youtube_dl_exec}", "-x", "--audio-format", "mp3", 
+                "--no-warnings", "-o", f"{destination_arg}", f"{url}"
+                ]
+        else:
+            cmd = [f"{path_youtube_dl_exec}", "-x", "--postprocessor-args", "\"-ss 00:00:00.00 -t 00:00:15.00\"", f"{url}", "--audio-format", "mp3", "-o", f"{destination_arg}"]
+        
+        
+        ### Speedmode is not supported on Windows because of this way of calling the command. On Windows it does not wait until all the files for the mp3 are merged. Therefore I still need to use subprocess.run to make this work
+        
         try:
-            proc = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
+            #proc = subprocess.run(
+            #    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            #    )
+            subprocess.check_output(' '.join(cmd))
             sleep(0.1)
-            self.songname = os.listdir("downloaded_mp3s")[0]
-            self.vprint(f"{os.listdir('downloaded_mp3s')[0]} with id {id} downloaded, now performing fingerprint match scan. Please wait...")
+            songname = os.listdir("downloaded_mp3s")[0]
+            self.vprint(f"{songname} with id {id} downloaded, now performing fingerprint match scan. Please wait...")
         except KeyboardInterrupt:
             ### completely exit program if this is what user wants
             exit()
@@ -121,12 +131,14 @@ class Finder:
             ### when return value is None, we go to the next song to check (see code in line 326)
             return None
         
+        
 
         # Convert stdout to UTF-8 string from bytes.
         # TODO: test Windows compatibility?
-        # Greek letters not supported for commented out part!!
+        # UTF-16 also does not work, can't read byte 0\x0 on Windows.
+        
         '''
-        stdout = proc.stdout.decode("utf-8")
+        stdout = proc.stdout.decode("utf-16")
         expr = r"\[ffmpeg\] Destination: (.*\.mp3).*"
         match = re.search(expr, stdout)
 
@@ -134,73 +146,12 @@ class Finder:
             return None
         
         song_fpath = match.groups()[0]
-        
-        
-        print(f"\n\n{stdout}\n===\n{expr}\n===\n{match}\n===\n{match.groups()}\n\n")
-        exit()
         return song_fpath
+        
         '''
-        
         ### This does support greek letters even though it may not be the best way to do it.
         return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
-    
-    
-    def get_song_mp3_speedmode(self, id):
-        ### Delete existing mp3 files in downloaded_mp3s directory in case there is one left of a previous run
-        self.delete_mp3s()
-        self.vprint("")
-        self.vprint("Downloading mp3...")
-        url = "https://youtube.com/watch?v=" + id
         
-        dir_here = os.path.abspath(os.getcwd())
-        dir_youtube_dl_dir = os.path.join(dir_here, "youtube-dl")
-        
-        ### Set youtube-dl exectuable for windows and linux users
-        if sys.platform == "win32":
-            youtube_dl_exec = "youtube-dl.exe"
-        else:
-            youtube_dl_exec = "youtube-dl"
-            
-        path_youtube_dl_exec = os.path.join(dir_youtube_dl_dir, youtube_dl_exec)
-        
-        
-        dir_downloaded_mp3s = os.path.join(dir_here, "downloaded_mp3s")
-    
-        ### '%(title)s.%(ext)s' comes from how youtube-dl.exe outputs files with 
-        ### filename as youtube title
-        destination_arg = os.path.join(dir_downloaded_mp3s, "%(title)s.%(ext)s")
-        
-        ### Make the mp3 folder which will contain a downloaded mp3
-        if not os.path.isdir(dir_downloaded_mp3s):
-            os.mkdir(dir_downloaded_mp3s)
-        
-        cmd = [f"{path_youtube_dl_exec}", "-x", "--postprocessor-args", "\"-ss 00:00:00.00 -t 00:00:30.00\"", f"{url}", "--audio-format", "mp3", "-o", f"{destination_arg}"]
-        
-                
-        try:
-            subprocess.check_output(' '.join(cmd))
-        except KeyboardInterrupt:
-            exit()
-        except:
-            ### always show error even when verbose is off
-            cprint("Youtube audio couldn't be downloaded. Skipping for now.", "red")
-            return None
-        sleep(0.1)
-        self.songname = os.listdir("downloaded_mp3s")[0]
-        self.vprint(f"{os.listdir('downloaded_mp3s')[0]} with id {id} downloaded, now performing fingerprint match scan. Please wait...")
-        
-        
-        ### This does support greek letters even though it may not be the best way to do it.
-        sleep(0.3)
-        return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
-
-
-    """
-    It may be possible to merge the previous two download functions and 
-    I would like to do that 
-    but due to a small change in calling the youtube-dl.exe command 
-    it's got to be like this for now.
-    """
     
     
     def delete_mp3s(self):
@@ -232,13 +183,14 @@ class Finder:
         
         return source
         
-    def check_file(self, fpath, thresh=40):
+    def check_file(self, fpath, thresh=20):
         """
         Fingerprint and try to match a song against database
         """
         
         matches = run_recognition(fpath)
         song = align_matches(self.sql, matches)
+        self.vprint(f"Confidence of a match: {song['CONFIDENCE']}")
         return song["CONFIDENCE"] >= thresh
     
         
@@ -322,10 +274,7 @@ class Finder:
             (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(id_)))):
                 
                 ### download the song
-                if not self.speedmode:
-                    song_fpath = self.get_song_mp3(id_)
-                else:
-                    song_fpath = self.get_song_mp3_speedmode(id_)
+                song_fpath = self.get_song_mp3(id_)
                 
                 ### we skip this song if something went wrong with the download
                 if song_fpath is None:
@@ -334,7 +283,7 @@ class Finder:
                 
                 try:
                     possible_match = self.check_file(song_fpath)
-                    self.vprint(f"{100*index/total_videos:.2f}% done")
+                    self.vprint(f"{100*(index + 1)/total_videos:.2f}% done")
                     self.sql.add_checked_id(id_)
                 except IndexError:
                     cprint("Something went wrong, probably a weird youtube title. Skipping for now.", "red")
