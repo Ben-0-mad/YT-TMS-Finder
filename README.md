@@ -15,7 +15,7 @@ The necessary code was already available, I just made them work together.
 
 ## How to use
 usage: ```find_stable.py [-h] [-i] [-s] [-v] [-t THRESHOLD] [-c CHANNEL_URL] [-id ID] [-r RESTORE_FILE]```
-1. ```-c CHANNEL_URL``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
+1. ```-c``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
 1. ```-i``` ignore videos that were checked in another session already.
 1. ```-s``` download only first 30 seconds of video. This speeds up the download and fingerprinting.
 1. ```-v``` for verbosity.
