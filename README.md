@@ -95,7 +95,7 @@ sudo apt install ffmpeg
 - Colorama RecursionError was fixed.
 
 ### V1.0.4-alpha
--Code optimisation
+- Code optimisation
 
 ### V1.0.3
 - Speedmode: use ```-s``` (it uses only the first 30 seconds of a video to do the audio recognition on)
