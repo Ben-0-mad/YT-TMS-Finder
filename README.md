@@ -61,7 +61,7 @@ Then open up a command prompt (press Windows key and type CMD). Navigate to the 
 ## How to set up on Linux
 
 1. Make sure you have python 3 installed.
-1. Open a command prompt and install the requirements:
+1. Open a terminal and install the requirements:
 ```
 $ pip install -r requirements.txt
 ```
