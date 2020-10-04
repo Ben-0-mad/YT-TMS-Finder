@@ -1,6 +1,8 @@
 import sqlite3
 from termcolor import *
 import colorama
+colorama.init()
+
 from libs.db import Database
 from libs.config import get_config
 from libs.utils import grouper
@@ -12,9 +14,6 @@ class SqliteDatabase(Database):
 
     def __init__(self):
         self.connect()
-        
-    #def sql_colour(self):
-        colorama.init()
 
     def connect(self):
         config = get_config()

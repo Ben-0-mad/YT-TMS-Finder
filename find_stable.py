@@ -1,6 +1,6 @@
 import argparse                         #for getting command line arguments
 import os                               #for various things
-from selenium import webdriver          #for getting html source of channel
+from selenium import webdriver, common  #for getting html source of channel
 from time import sleep                  #to prevent errors
 import re                       
 import bs4 as bs                        #for working with html source file
@@ -8,11 +8,14 @@ import subprocess                       #calling other script or executables fro
 import sys
 from termcolor import *           #for getting colored text
 import colorama
+### initialise colored text
+colorama.init()
 
 from libs.db_sqlite import SqliteDatabase #for working with the SQL database
 from recognize_from_file import run_recognition
 from libs.utils import align_matches
 import math
+import datetime                         # To include time info in the missed.txt file
 
 print("""
 Welcome to 
@@ -32,27 +35,39 @@ example url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 """)
 
 
-
 class Finder:
-    def __init__(self, channel_url, arguments):
-        ### setting variables
-        self.sql = SqliteDatabase()
-        #self.sql.sql_colour()
-        
-        self.ignore_checked = arguments.ignore
-        self.verbose = arguments.verbose
-        self.speedmode = arguments.speedmode
-        self.vprint(str(arguments), "yellow")
-        
-        ### Make sure we have this folder
+    def __init__(self):
+        ### Verifying needed folders
         if not os.path.isdir("downloaded_mp3s"):
             os.mkdir("downloaded_mp3s")
         
+        ### setting variables
+        self.arguments = get_arguments()
+        self.sql = SqliteDatabase()
+        
+        assert 3 - [self.arguments.id, self.arguments.restore_file, self.arguments.channel_url].count(None) <= 1 , "Can't have any of id, channel, restore file as combined arguments."
+        
+        # if there is no url or id, ask for url
+        if (self.arguments.id is None and self.arguments.channel_url is None) or self.arguments.restore_file :
+            self.arguments.channel_url = input("\nPlease enter the channel url: ")   #Example input: www.youtube.com/c/GlitchxCity/featured
+        
+        # if there is a url, verify if it's a correct URL
+        if self.arguments.channel_url is not None:
+            self.verify_url(self.arguments.channel_url)
+        
+        
+        self.ignore_checked = self.arguments.ignore
+        self.verbose = self.arguments.verbose
+        self.speedmode = self.arguments.speedmode
+        self.vprint(str(self.arguments), "yellow")
+        
+        
+    def verify_url(self, url):
         ### Check if the channel url is in right format
         expr_channel = r"^.*(/c(hannel)?/[a-zA-Z0-9-_]+)"
         expr_user    = r"^.*(/u(ser)?/[a-zA-Z0-9-_]+)"
-        channel_path_match = re.match(expr_channel, channel_url)
-        user_path_match = re.match(expr_user, channel_url)
+        channel_path_match = re.match(expr_channel, url)
+        user_path_match = re.match(expr_user, url)
         
         if channel_path_match is None and user_path_match is None:
             raise ValueError("Malformed URL, please give a valid URL.")
@@ -62,7 +77,8 @@ class Finder:
         else:
             channel_path = user_path_match.groups()[0]
             self.channel_url = "https://www.youtube.com" + channel_path + "/videos"
-        
+        return True
+    
     
     def vprint(self, text: str, colour:str = "white"):
         """
@@ -70,6 +86,7 @@ class Finder:
         """
         if self.verbose:
             cprint(text, colour)
+    
     
     def get_song_mp3(self, id: str) -> str:
         """
@@ -128,6 +145,8 @@ class Finder:
         except:
             ### always show error even when verbose is off
             cprint("Youtube audio couldn't be downloaded. Skipping for now.", "red")
+            with open("missed.txt", "a") as f:
+                f.write(f"Missed: {id} at {datetime.datetime.now().time()}\n")
             ### when return value is None, we go to the next song to check (see code in line 326)
             return None
         
@@ -166,8 +185,30 @@ class Finder:
     
     
     def get_channel_source(self):
-        ### Open a browser
-        driver = webdriver.Chrome()
+        ### if a restore file is supplied, use that instead
+        if self.arguments.restore_file is not None:
+            with open(self.arguments.restore_file) as f:
+                source = f.read()
+            return source
+        
+        ### Open a browser and catch chromedriver not found error
+        try:
+            driver = webdriver.Chrome()
+        except common.exceptions.WebDriverException:
+            try:
+                driver = webdriver.Chrome(executable_path = r"C:\ProgramData\chocolatey\bin\chromedriver.exe")
+            except:
+                print("If you see this, selenium can't find your chromedriver.")
+                print("In order to fix this, search for the chromedriver on your file system (search the whole C: for \"chromedriver.exe\")")
+                print("Now copy the file location of a chromedriver.exe and paste it")
+                print(r"example input: C:\ProgramData\chocolatey\bin\chromedriver.exe")
+                location = input("Paste here:")
+                driver = webdriver.Chrome(executable_path = location)
+                print("alternatively you can put it in the code yourself so you don't have to constantly fill this in.")
+                print("To do that, in the file find_stable.py search for the line \"driver = webdriver.Chrome()\" and in between the brackets put")
+                print("executable_path = YOUR_CHROMEDRIVER_LOCATION")
+        
+        
         driver.get(self.channel_url)
         sleep(2)
         source = driver.page_source
@@ -181,8 +222,12 @@ class Finder:
             sleep(0.1)
         driver.quit()
         
-        return source
+        with open("restore_file.html", "w") as f:
+            f.write(source.encode('utf-8').decode('ascii','ignore'))
         
+        return source
+    
+    
     def check_file(self, fpath, thresh=20):
         """
         Fingerprint and try to match a song against database
@@ -246,7 +291,23 @@ class Finder:
         
         
         '''We may need to add also the video titles if we want to include a speedmode but for now this will do.'''
+    
+    
+    def check_one_video(self, id_):
+        song_fpath = self.get_song_mp3(id_)
+        if song_fpath is None:
+                return
         
+        possible_match = self.check_file(song_fpath, )
+        
+        if possible_match:
+            self.vprint("Possible match found", "green")
+            song_fname = os.path.split(song_fpath)[1]
+            with open("MATCHES.txt", "a") as f:
+                f.write(f"{song_fname} with YT ID {id_} has a match with the database! Oh my lawd please check it\n")
+        else:
+            self.vprint("Probably not a match")
+    
     
     def check_channel(self, max_duration=210):
         #Get the HTML source of the channel's video section
@@ -266,9 +327,9 @@ class Finder:
             print((self.ignore_checked == False and video["duration"] <=max_duration) or (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(id_))))
             '''
             
-            ### this seems like complicated logic but it's exactly what we want please 
-            ### fill in "(p^~q) or (p ^ (q^ (~r)))" on the website 
-            ### https://web.stanford.edu/class/cs103/tools/truth-table-tool/ to see this
+            ### this seems like complicated logic but it's exactly what we want, 
+            ### please fill in "(p^~q) or (p ^ (q^ (~r)))" on the website 
+            ### https://web.stanford.edu/class/cs103/tools/truth-table-tool/ to see for yourself
             if ((self.ignore_checked == False and video["duration"] <=max_duration) 
             or 
             (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(id_)))):
@@ -282,7 +343,7 @@ class Finder:
                     continue 
                 
                 try:
-                    possible_match = self.check_file(song_fpath)
+                    possible_match = self.check_file(song_fpath, self.arguments.threshold)
                     self.vprint(f"{100*(index + 1)/total_videos:.2f}% done")
                     self.sql.add_checked_id(id_)
                 except IndexError:
@@ -299,30 +360,29 @@ class Finder:
                     with open("MATCHES.txt", "a") as f:
                         f.write(f"{song_fname} with YT ID {id_} has a match with the database! Oh my lawd please check it\n")
             self.delete_mp3s()
-
+    
+    
+    def main(self):
+        if self.arguments.id is not None:
+            self.check_one_video(self.arguments.id)
+        else:
+            self.check_channel()
+        
 
 def get_arguments():
     parser = argparse.ArgumentParser(description='''TMS-Finder''')
     
-    parser.add_argument("-i", "--ignore", dest="ignore", default=False, help="Ignore already checked videos", action='store_true')
-    parser.add_argument("-s", "--speedmode", dest="speedmode", help="Activate speed mode", action = "store_true")
-    parser.add_argument("-v", "--verbose", dest="verbose", help="Give Feedback", action = "store_true")
-    parser.add_argument("-c", "--channel", dest="channel_url", help="help")
+    parser.add_argument("-i", "--ignore", dest = "ignore", default=False, help="Ignore already checked videos", action='store_true')
+    parser.add_argument("-s", "--speedmode", dest = "speedmode", help="Activate speed mode", action = "store_true")
+    parser.add_argument("-v", "--verbose", dest = "verbose", help="Give Feedback, default = True", action = "store_true", default = True)
+    parser.add_argument("-t", "--threshold", dest = "threshold", action="store", type = int, help = "Set the threshold for the number of hash matches at which you are notified of a match, default is 20", default = 20)
+    parser.add_argument("-c", "--channel", dest = "channel_url", help="Parse the channel url as command line argument")
+    parser.add_argument("-id" ,"--id", dest = "id", help = "Test a single video instead of a whole YT channel.")
+    parser.add_argument("-r", "--restore-file", dest = "restore_file", help="Give a restore file to get the html source of a channel without opening the browser again")
     
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    args = get_arguments()
-    
-    ### Check channel argument
-    if args.channel_url is None:
-        channel_url = input("\nPlease enter the channel url: ")   #Example input: www.youtube.com/c/GlitchxCity/featured
-    else:
-        channel_url = str(args.channel_url)
-    
-    ### initialise colored text
-    colorama.init()
-    
-    finder = Finder(channel_url, args)
-    finder.check_channel()
+    finder = Finder()
+    finder.main()
