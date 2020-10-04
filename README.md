@@ -19,6 +19,9 @@ usage: ```find_stable.py [-h] [-i] [-s] [-v] [-c CHANNEL_URL]```
 1. ```-i``` ignore videos that were checked in another session already.
 1. ```-s``` download only first 30 seconds of video. This speeds up the download and fingerprinting.
 1. ```-v``` for verbosity.
+1. ```-r``` for restore file (This restore file has to be the html source of a youtube channel)
+1. ```-id``` to check only one video ID
+1. ```-t``` to set the hash matches threshold (at which you will be notified of a match)
 1. ```-h``` for the help message.
 
 ## How to set up on Windows
