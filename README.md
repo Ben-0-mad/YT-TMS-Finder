@@ -87,6 +87,16 @@ sudo apt install ffmpeg
 
 ## Updates
 
+### V1.0.4-alpha.1
+- Made it easier for the user to get the chromedriver.exe for selenium right
+- Added -r option for restore file (html source of a youtube channel)
+- Added -id option to check only one video
+- Added -t option to select the hash matches threshold yourself, default is 20.
+- Colorama RecursionError was fixed.
+
+### V1.0.4-alpha
+-Code optimisation
+
 ### V1.0.3
 - Speedmode: use ```-s``` (it uses only the first 30 seconds of a video to do the audio recognition on)
 - Verbosity: use ```-v``` (recommended)
