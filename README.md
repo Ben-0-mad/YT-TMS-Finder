@@ -2,7 +2,7 @@
 
 To find unidentified music
 
-![](https://i.ibb.co/bF6wCKr/intro-image.png)
+![](https://i.ibb.co/ZxW4NLh/intro-image.jpg)
 
 ## What you need to know
 
