@@ -190,11 +190,11 @@ sqlite - connection has been closed
 - What is the optimal number of threads?
   After doing a couple of quick tests, I got these results:
   
-  * # of threads = 1: 12 videos took 98.53 seconds
-  * # of threads = 2: 12 videos took 57.15 seconds
-  * # of threads = 3: 12 videos took 50.21 seconds
-  * # of threads = 4: 12 videos took 51.58 seconds
-  * # of threads = 5: 12 videos took 55.09 seconds
+  * \# of threads = 1: 12 videos took 98.53 seconds
+  * \# of threads = 2: 12 videos took 57.15 seconds
+  * \# of threads = 3: 12 videos took 50.21 seconds
+  * \# of threads = 4: 12 videos took 51.58 seconds
+  * \# of threads = 5: 12 videos took 55.09 seconds
   
   Therefore it seems like 3 threads is a good option. And after doing some tests with a larger number of videos, I got these results:
   [To be finished]
