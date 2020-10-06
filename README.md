@@ -1,8 +1,8 @@
 # Youtube TMS Finder
 
-To find unidentified music
+To find unidentified music.
 
-![](https://i.ibb.co/ZxW4NLh/intro-image.jpg)
+![](https://i.ibb.co/w7zGH3d/intro-image2.png)
 
 ## What you need to know
 
@@ -19,6 +19,7 @@ The necessary code was already available, I just made them work together.
 usage: ```find_stable.py [-h] [-i] [-s] [-v] [-t THRESHOLD] [-c CHANNEL_URL] [-id ID] [-r RESTORE_FILE]```
 1. ```-c``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
 1. ```-i``` ignore videos that were checked in another session already.
+1. ```-m``` multithreading, max number of videos to check at the same time, 3 is optimal
 1. ```-s``` download only first 30 seconds of video. This speeds up the download and fingerprinting.
 1. ```-v``` for verbosity.
 1. ```-r``` for restore file (This restore file has to be the html source of a youtube channel)
@@ -88,6 +89,9 @@ sudo apt install ffmpeg
 - verbosity update and speedmode update coming soon.
 
 ## Updates
+
+### V1.0.4-beta
+-Added multithreading
 
 ### V1.0.4-alpha.1
 - Made it easier for the user to get the chromedriver.exe for selenium right
