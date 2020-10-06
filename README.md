@@ -176,13 +176,24 @@ sqlite - connection has been closed
   ```
 - Can I add my own songs to the database?
 
-  Yes, itspoma made this possible. Just upload that mp3 file into the "mp3" folder. Now do `python collect-fingerprints-of-songs.py`. Any song in the 'mp3' folder that was previously added already will be skipped. The song is now added into the database and can be recognised. For more info please check out [itspoma's repo](https://github.com/itspoma/audio-fingerprint-identifying-python)
- 
-- Is it fast?
-  At the moment it ins't. I have an idea in mind of how to fix this but I'm testing it at the moment.
+  Yes, itspoma made this possible. Just upload that mp3 file into the "mp3" folder. Now do `python collect-fingerprints-of-songs.py`. Any song in the 'mp3' folder that was previously added already will be skipped. The song is now added into the database and can be recognised. For more info please check out [itspoma's repo](https://github.com/itspoma/audio-fingerprint-identifying-python).
+  
+  Note: ALWAYS MAKE SURE THAT THE AUDIO YOU PUT IN THE mp3 FOLDER ARE DOWNLOADED FROM YOUTUBE. This has to do with how Youtube processes audio. If you download something from youtube and compare it to something downloaded from youtube, you are likely not to miss that there is a match. If the audio you put in the database is not download from youtube, you might see that the bot does not find a match. I know this is very strange but unfortunately I have no idea why this happens.
   
 - Is it storage efficient?
-  After installing the necessary modules, yes, very.
+  After installing the necessary modules, yes.
+
+- What is the optimal number of threads?
+  After doing a couple of quick tests, I got these results:
+  
+  * # of threads = 1: 12 videos took 98.53 seconds
+  * # of threads = 2: 12 videos took 57.15 seconds
+  * # of threads = 3: 12 videos took 50.21 seconds
+  * # of threads = 4: 12 videos took 51.58 seconds
+  * # of threads = 5: 12 videos took 55.09 seconds
+  
+  Therefore it seems like 3 threads is a good option. And after doing some tests with a larger number of videos, I got these results:
+  [To be finished]
 
 - How does it work in detail?
   First we have to get all the video ID's from a youtube channel. This is not possbile by simply using requests or beautifulsoup. We would have to open the browser ourselves going down all the way to the bottom of the page, but we can also do this with webbot so we don't have to do it. Then it downloads the HTML source. From this HTML file we can obtain all the video ID's and their time length without the need of the YouTube API (which costs money). For every video the following is done:
