@@ -91,7 +91,7 @@ sudo apt install ffmpeg
 ## Updates
 
 ### V1.0.4-beta
--Added multithreading
+- Added multithreading
 
 ### V1.0.4-alpha.1/2
 - Made it easier for the user to get the chromedriver.exe for selenium right
