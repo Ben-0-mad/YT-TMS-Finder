@@ -409,7 +409,5 @@ if __name__ == '__main__':
     try:
         finder.main()
     except:
-        print("Why you leaving me :(")
-        sys.exit()
         finder.delete_mp3s()
         exit()
