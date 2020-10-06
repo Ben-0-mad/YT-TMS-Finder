@@ -18,17 +18,17 @@ class SqliteDatabase(Database):
     def connect(self):
         config = get_config()
 
-        self.conn = sqlite3.connect(config["db.file"])
+        self.conn = sqlite3.connect(config["db.file"], check_same_thread=False)
         self.conn.text_factory = str
 
         self.cur = self.conn.cursor()
 
-        cprint("sqlite - connection opened", "yellow")
+        #cprint("sqlite - connection opened", "yellow")
 
     def __del__(self):
         self.conn.commit()
         self.conn.close()
-        cprint("sqlite - connection has been closed", "yellow")
+        #cprint("sqlite - connection has been closed", "yellow")
 
     def query(self, query, values=[]):
         self.cur.execute(query, values)

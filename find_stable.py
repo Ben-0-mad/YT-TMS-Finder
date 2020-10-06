@@ -17,6 +17,14 @@ from libs.utils import align_matches
 import math
 import datetime                         # To include time info in the missed.txt file
 
+import threading
+import multiprocessing
+
+### for getting script runtime
+import time
+start_time = time.time()
+
+
 print("""
 Welcome to 
 
@@ -36,7 +44,7 @@ example url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 
 
 class Finder:
-    def __init__(self):
+    def __init__(self):        
         ### Verifying needed folders
         if not os.path.isdir("downloaded_mp3s"):
             os.mkdir("downloaded_mp3s")
@@ -48,7 +56,7 @@ class Finder:
         assert 3 - [self.arguments.id, self.arguments.restore_file, self.arguments.channel_url].count(None) <= 1 , "Can't have any of id, channel, restore file as combined arguments."
         
         # if there is no url or id, ask for url
-        if (self.arguments.id is None and self.arguments.channel_url is None) or self.arguments.restore_file :
+        if (self.arguments.id is None and self.arguments.channel_url is None and self.arguments.restore_file is None):
             self.arguments.channel_url = input("\nPlease enter the channel url: ")   #Example input: www.youtube.com/c/GlitchxCity/featured
         
         # if there is a url, verify if it's a correct URL
@@ -60,6 +68,9 @@ class Finder:
         self.verbose = self.arguments.verbose
         self.speedmode = self.arguments.speedmode
         self.vprint(str(self.arguments), "yellow")
+        
+        ### Make sure that there are not leftovers from previous runs
+        self.delete_mp3s()
         
         
     def verify_url(self, url):
@@ -94,8 +105,7 @@ class Finder:
         """
         
         ### Delete existing mp3 files in downloaded_mp3s directory in case there is one left of a previous run
-        self.delete_mp3s()
-        self.vprint("\nDownloading mp3...")
+        #self.delete_mp3s()
         url = "https://youtube.com/watch?v=" + id
         
         dir_here = os.path.abspath(os.getcwd())
@@ -113,7 +123,8 @@ class Finder:
     
         ### '%(title)s.%(ext)s' comes from how youtube-dl.exe outputs files with 
         ### filename as youtube title
-        destination_arg = os.path.join(dir_downloaded_mp3s, "%(title)s.%(ext)s")
+        #destination_arg = os.path.join(dir_downloaded_mp3s, "%(title)s.%(ext)s")
+        destination_arg = os.path.join(dir_downloaded_mp3s, f"{id}.%(ext)s")
         
         ### Make the mp3 folder which will contain a downloaded mp3
         if not os.path.isdir(dir_downloaded_mp3s):
@@ -132,15 +143,12 @@ class Finder:
         ### Speedmode is not supported on Windows because of this way of calling the command. On Windows it does not wait until all the files for the mp3 are merged. Therefore I still need to use subprocess.run to make this work
         
         try:
-            #proc = subprocess.run(
-            #    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            #    )
             subprocess.check_output(' '.join(cmd))
             sleep(0.1)
-            songname = os.listdir("downloaded_mp3s")[0]
-            self.vprint(f"{songname} with id {id} downloaded, now performing fingerprint match scan. Please wait...")
+            self.vprint(f"Video with id {id} downloaded, now performing fingerprint match scan.")
         except KeyboardInterrupt:
             ### completely exit program if this is what user wants
+            self.delete_mp3s()
             exit()
         except:
             ### always show error even when verbose is off
@@ -150,24 +158,6 @@ class Finder:
             ### when return value is None, we go to the next song to check (see code in line 326)
             return None
         
-        
-
-        # Convert stdout to UTF-8 string from bytes.
-        # TODO: test Windows compatibility?
-        # UTF-16 also does not work, can't read byte 0\x0 on Windows.
-        
-        '''
-        stdout = proc.stdout.decode("utf-16")
-        expr = r"\[ffmpeg\] Destination: (.*\.mp3).*"
-        match = re.search(expr, stdout)
-
-        if proc.stderr or not match:
-            return None
-        
-        song_fpath = match.groups()[0]
-        return song_fpath
-        
-        '''
         ### This does support greek letters even though it may not be the best way to do it.
         return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
         
@@ -181,7 +171,7 @@ class Finder:
         for file in os.listdir("downloaded_mp3s"):
             full_path = os.path.join(current_directory, "downloaded_mp3s", file)
             os.remove(full_path)
-            self.vprint("mp3 deleted.")
+            #self.vprint("mp3 deleted.")
     
     
     def get_channel_source(self):
@@ -232,11 +222,22 @@ class Finder:
         """
         Fingerprint and try to match a song against database
         """
+        ### Getting ID from filepath, Might just supply ID as argument
+        base = os.path.basename(fpath)
+        id_, _ = os.path.splitext(base)
         
         matches = run_recognition(fpath)
         song = align_matches(self.sql, matches)
-        self.vprint(f"Confidence of a match: {song['CONFIDENCE']}")
-        return song["CONFIDENCE"] >= thresh
+        confidence = song['CONFIDENCE']
+        self.vprint(f"Confidence of a match: {confidence}", "yellow")
+        
+        ### If there's a match, give feedback to user
+        if confidence >= thresh:
+            self.vprint(f"POSSIBLE MATCH FOUND FOR ID: {id_}", "green")
+            with open("MATCHES.txt", "a") as f:
+                f.write(f"Video with YT ID {id_} has a match with the database! Oh my lawd please check it\n")
+        
+        return confidence >= thresh
     
         
     def get_videos(self, source):
@@ -301,7 +302,6 @@ class Finder:
         possible_match = self.check_file(song_fpath, )
         
         if possible_match:
-            self.vprint("Possible match found", "green")
             song_fname = os.path.split(song_fpath)[1]
             with open("MATCHES.txt", "a") as f:
                 f.write(f"{song_fname} with YT ID {id_} has a match with the database! Oh my lawd please check it\n")
@@ -314,52 +314,70 @@ class Finder:
         source = self.get_channel_source()
         videos = self.get_videos(source)
         
-        total_videos = len(videos)
-        
-        for (video, index) in zip(videos, range(total_videos)):
-            id_ = video["id"]
-            
-            '''
-            print("")
-            print(video["duration"]<= max_duration)
-            print(self.ignore_checked)
-            print(self.sql.in_checked_ids(id_))
-            print((self.ignore_checked == False and video["duration"] <=max_duration) or (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(id_))))
-            '''
-            
-            ### this seems like complicated logic but it's exactly what we want, 
-            ### please fill in "(p^~q) or (p ^ (q^ (~r)))" on the website 
-            ### https://web.stanford.edu/class/cs103/tools/truth-table-tool/ to see for yourself
+        target_videos = []
+        for video in videos:
             if ((self.ignore_checked == False and video["duration"] <=max_duration) 
-            or 
-            (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(id_)))):
+                or 
+                (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(video["id"])))):
+                target_videos.append(video)
+        
+        total_videos = len(target_videos)
+        if total_videos == 0: self.vprint("All videos have been checked or are longer than than the max duration.","green"), exit()
+        
+        
+        _ = 0
+        for index in range(round(len(target_videos)/self.arguments.threads)):
+            section = target_videos[self.arguments.threads*index : self.arguments.threads*(index+1)]
+            
+            jobs = []
+            for video in section:
+                ### this seems like complicated logic but it's exactly what we want, 
+                ### please fill in "(p^~q) or (p ^ (q^ (~r)))" on the website 
+                ### https://web.stanford.edu/class/cs103/tools/truth-table-tool/ to see for yourself
                 
-                ### download the song
-                song_fpath = self.get_song_mp3(id_)
+                    id_ = video["id"]
+                    try:
+                        thread = threading.Thread(target=self.get_song_mp3, args=(id_,))
+                    except KeyboardInterrupt:
+                        self.delete_mp3s
+                        exit()
+                    jobs.append(thread)
+            
+            self.vprint("Downloading mp3s...")
+            for job in jobs:
+                _+=1
+                job.start()
+            for job in jobs:
+                job.join()
                 
                 ### we skip this song if something went wrong with the download
-                if song_fpath is None:
-                    ### Skip to the next video in the for loop
-                    continue 
+                #if song_fpath is None:
+                #    ### Skip to the next video in the for loop
+                #    continue 
                 
-                try:
-                    possible_match = self.check_file(song_fpath, self.arguments.threshold)
-                    self.vprint(f"{100*(index + 1)/total_videos:.2f}% done")
-                    self.sql.add_checked_id(id_)
-                except IndexError:
-                    cprint("Something went wrong, probably a weird youtube title. Skipping for now.", "red")
-                    continue
-                except KeyboardInterrupt:
-                    exit()
+            #self.delete_mp3s()
+            #continue
+            #pass
+            #exit()
+            # this works now :)
+            
+            jobs = []
+            for file in os.listdir("downloaded_mp3s"):
+                p = threading.Thread(target=self.check_file, args=(os.path.join("downloaded_mp3s", file), self.arguments.threshold, ))
+                #filename, file_extension = os.path.splitext(file)
+                #self.sql.add_checked_id(filename)
+                jobs.append(p)
+            
+            for job in jobs:
+                job.start()
+            for job in jobs:
+                job.join()
                 
-                if possible_match:
-                    self.vprint("Possible match found", "green")
-                    
-                    song_fname = os.path.split(song_fpath)[1]
-                    
-                    with open("MATCHES.txt", "a") as f:
-                        f.write(f"{song_fname} with YT ID {id_} has a match with the database! Oh my lawd please check it\n")
+            self.vprint(f"{100*(_)/total_videos:.2f}% done")
+            
             self.delete_mp3s()
+            print("")    
+        self.delete_mp3s()
     
     
     def main(self):
@@ -367,6 +385,8 @@ class Finder:
             self.check_one_video(self.arguments.id)
         else:
             self.check_channel()
+        
+        print(f"runtime: {time.time() - start_time}")
         
 
 def get_arguments():
@@ -376,6 +396,7 @@ def get_arguments():
     parser.add_argument("-s", "--speedmode", dest = "speedmode", help="Activate speed mode", action = "store_true")
     parser.add_argument("-v", "--verbose", dest = "verbose", help="Give Feedback, default = True", action = "store_true", default = True)
     parser.add_argument("-t", "--threshold", dest = "threshold", action="store", type = int, help = "Set the threshold for the number of hash matches at which you are notified of a match, default is 20", default = 20)
+    parser.add_argument("-m", "--multi-threading", dest="threads", action="store",type=int, help="Amount of videos allowed to concurrently check, default is 1", default=1)
     parser.add_argument("-c", "--channel", dest = "channel_url", help="Parse the channel url as command line argument")
     parser.add_argument("-id" ,"--id", dest = "id", help = "Test a single video instead of a whole YT channel.")
     parser.add_argument("-r", "--restore-file", dest = "restore_file", help="Give a restore file to get the html source of a channel without opening the browser again")
@@ -385,4 +406,10 @@ def get_arguments():
 
 if __name__ == '__main__':
     finder = Finder()
-    finder.main()
+    try:
+        finder.main()
+    except:
+        print("Why you leaving me :(")
+        sys.exit()
+        finder.delete_mp3s()
+        exit()
