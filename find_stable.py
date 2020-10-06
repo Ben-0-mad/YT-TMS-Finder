@@ -18,7 +18,7 @@ import math
 import datetime                         # To include time info in the missed.txt file
 
 import threading
-import multiprocessing
+#import multiprocessing
 
 ### for getting script runtime
 import time
@@ -139,9 +139,6 @@ class Finder:
         else:
             cmd = [f"{path_youtube_dl_exec}", "-x", "--postprocessor-args", "\"-ss 00:00:00.00 -t 00:00:15.00\"", f"{url}", "--audio-format", "mp3", "-o", f"{destination_arg}"]
         
-        
-        ### Speedmode is not supported on Windows because of this way of calling the command. On Windows it does not wait until all the files for the mp3 are merged. Therefore I still need to use subprocess.run to make this work
-        
         try:
             subprocess.check_output(' '.join(cmd))
             sleep(0.1)
@@ -158,7 +155,7 @@ class Finder:
             ### when return value is None, we go to the next song to check (see code in line 326)
             return None
         
-        ### This does support greek letters even though it may not be the best way to do it.
+        ### Even though this may not be the best way to do it, this does support greek letters on both Windows and Linux 
         return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
         
     
@@ -171,7 +168,6 @@ class Finder:
         for file in os.listdir("downloaded_mp3s"):
             full_path = os.path.join(current_directory, "downloaded_mp3s", file)
             os.remove(full_path)
-            #self.vprint("mp3 deleted.")
     
     
     def get_channel_source(self):
@@ -316,25 +312,28 @@ class Finder:
         
         target_videos = []
         for video in videos:
+            ### this seems like complicated logic but it's exactly what we want, 
+            ### please fill in "(p^~q) or (p ^ (q^ (~r)))" on the website 
+            ### https://web.stanford.edu/class/cs103/tools/truth-table-tool/ to see for yourself
             if ((self.ignore_checked == False and video["duration"] <=max_duration) 
                 or 
                 (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(video["id"])))):
                 target_videos.append(video)
         
+        ### Get total number of vidoes to display progress percentage
         total_videos = len(target_videos)
         if total_videos == 0: self.vprint("All videos have been checked or are longer than than the max duration.","green"), exit()
         
         
+        ### We use two indexes, both for a different purpose, _ is for progress percentage, 'index' is for getting correct slices of target_videos (so multithreading purposes)
         _ = 0
         for index in range(round(len(target_videos)/self.arguments.threads)):
             section = target_videos[self.arguments.threads*index : self.arguments.threads*(index+1)]
             
+            
+            ### Downloading mp3 with multithreading
             jobs = []
             for video in section:
-                ### this seems like complicated logic but it's exactly what we want, 
-                ### please fill in "(p^~q) or (p ^ (q^ (~r)))" on the website 
-                ### https://web.stanford.edu/class/cs103/tools/truth-table-tool/ to see for yourself
-                
                     id_ = video["id"]
                     try:
                         thread = threading.Thread(target=self.get_song_mp3, args=(id_,))
@@ -343,24 +342,15 @@ class Finder:
                         exit()
                     jobs.append(thread)
             
-            self.vprint("Downloading mp3s...")
+            self.vprint("Downloading mp3(s)...")
             for job in jobs:
-                _+=1
+                _ += 1
                 job.start()
             for job in jobs:
                 job.join()
-                
-                ### we skip this song if something went wrong with the download
-                #if song_fpath is None:
-                #    ### Skip to the next video in the for loop
-                #    continue 
-                
-            #self.delete_mp3s()
-            #continue
-            #pass
-            #exit()
-            # this works now :)
             
+            
+            ### Fingerprinting with multithreading
             jobs = []
             for file in os.listdir("downloaded_mp3s"):
                 p = threading.Thread(target=self.check_file, args=(os.path.join("downloaded_mp3s", file), self.arguments.threshold, ))
@@ -386,7 +376,7 @@ class Finder:
         else:
             self.check_channel()
         
-        print(f"runtime: {time.time() - start_time}")
+        self.vprint(f"runtime: {time.time() - start_time}")
         
 
 def get_arguments():
@@ -409,5 +399,5 @@ if __name__ == '__main__':
     try:
         finder.main()
     except:
-        finder.delete_mp3s()
-        exit()
+        run_event.clear()
+
