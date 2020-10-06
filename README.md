@@ -93,7 +93,7 @@ sudo apt install ffmpeg
 ### V1.0.4-beta
 -Added multithreading
 
-### V1.0.4-alpha.1
+### V1.0.4-alpha.1/2
 - Made it easier for the user to get the chromedriver.exe for selenium right
 - Added -r option for restore file (html source of a youtube channel)
 - Added -id option to check only one video
