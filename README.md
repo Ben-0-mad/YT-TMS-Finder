@@ -16,16 +16,16 @@ The necessary code was already available, I just made them work together.
 - Thanks to nrsyed for helping with code optimisation.
 
 ## How to use
-usage: ```find_stable.py [-h] [-i] [-s] [-v] [-t THRESHOLD] [-c CHANNEL_URL] [-id ID] [-r RESTORE_FILE]```
-1. ```-c``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
+usage: ```find_stable.py [-h] [-i] [-s] [-v] [-t THRESHOLD] [-m THREADS] [-c CHANNEL_URL] [-id ID] [-r RESTORE_FILE]```
+1. ```-h``` for the help message.
 1. ```-i``` ignore videos that were checked in another session already.
-1. ```-m``` multithreading, max number of videos to check at the same time, 3 is optimal
 1. ```-s``` download only first 30 seconds of video. This speeds up the download and fingerprinting.
 1. ```-v``` for verbosity.
-1. ```-r``` for restore file (This restore file has to be the html source of a youtube channel)
-1. ```-id``` to check only one video ID
 1. ```-t``` to set the hash matches threshold (at which you will be notified of a match)
-1. ```-h``` for the help message.
+1. ```-m``` multithreading, max number of videos to check at the same time, 3 is optimal
+1. ```-c``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
+1. ```-id``` to check only one video ID
+1. ```-r``` for restore file (This restore file has to be the html source of a youtube channel)
 
 ## How to set up on Windows
 
