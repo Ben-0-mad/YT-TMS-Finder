@@ -354,8 +354,8 @@ class Finder:
             jobs = []
             for file in os.listdir("downloaded_mp3s"):
                 p = threading.Thread(target=self.check_file, args=(os.path.join("downloaded_mp3s", file), self.arguments.threshold, ))
-                #filename, file_extension = os.path.splitext(file)
-                #self.sql.add_checked_id(filename)
+                filename, file_extension = os.path.splitext(file)
+                self.sql.add_checked_id(filename)
                 jobs.append(p)
             
             for job in jobs:
