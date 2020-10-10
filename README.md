@@ -177,6 +177,15 @@ sqlite - connection has been closed
 
 1. Problem with ffmpeg.
 
+## Contributing
+
+If you'd like to contribute, these are things that still need to be done:
+- Use youtube-dl python module instead of actual youtube-dl.exe file. This allows us to remove the youtube-dl folder in this repo.
+- Make script compatible with youtube-data API (and make this option optional), so you don't have to get open the channel url in a browser to grab the HTML and then obtain the videos.
+- Include timestamps in matches.txt
+- Add max_duration argument for the argparser
+- Finish FAQ section
+
 ## FAQ
 - How to check a youtube channel?
 
