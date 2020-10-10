@@ -73,7 +73,7 @@ class Finder:
         self.speedmode = self.arguments.speedmode
         self.vprint(str(self.arguments), "yellow")
         
-        ### Make sure that there are not leftovers from previous runs
+        ### Make sure that there are no leftovers from previous runs
         self.delete_mp3s()
         
         
