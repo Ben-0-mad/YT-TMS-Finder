@@ -231,10 +231,10 @@ class Finder:
         self.vprint(f"Confidence of a match: {confidence}", "yellow")
         
         ### If there's an exact match, give feedback to user, otherwise if there's a possible match notify the user as well
-        if confidence >= 5000:
+        if confidence >= 400:
             self.vprint(f"EXACT MATCH FOUND FOR ID: {id_}", "green")
             with open("MATCHES.txt", "a") as f:
-                f.write(f"You've found TMS. Video with ID {id_} is an EXACT match, with a confidence of {confidence}.\nWell done on solving the mystery!\n")
+                f.write(f"You've found an identical match with the database. Video with ID {id_} is an EXACT match, with a confidence of {confidence}.\n")
         elif confidence >= thresh:
             self.vprint(f"POSSIBLE MATCH FOUND FOR ID: {id_}", "green")
             with open("MATCHES.txt", "a") as f:
@@ -403,8 +403,5 @@ def get_arguments():
 
 if __name__ == '__main__':
     finder = Finder()
-    try:
-        finder.main()
-    except:
-        run_event.clear()
+    finder.main()
 
