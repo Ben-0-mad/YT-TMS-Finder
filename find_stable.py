@@ -1,33 +1,37 @@
-import argparse                         #for getting command line arguments
-import os                               #for various things
-from selenium import webdriver, common  #for getting html source of channel
-from time import sleep                  #to prevent errors
+import argparse                             #for getting command line arguments
+import os                                   #for various things
+from selenium import webdriver, common      #for getting html source of channel
+from time import sleep                      #to prevent errors
 import re                       
-import bs4 as bs                        #for working with html source file
-import subprocess                       #calling other script or executables from this file
+import bs4 as bs                            #for working with html source file
+import subprocess                           #calling other script or executables from this file
 import sys
-from termcolor import *           #for getting colored text
+from termcolor import *                     #for getting colored text
 import colorama
 ### initialise colored text
 colorama.init()
 
-from libs.db_sqlite import SqliteDatabase #for working with the SQL database
+from libs.db_sqlite import SqliteDatabase   #for working with the SQL database
 from recognize_from_file import run_recognition
 from libs.utils import align_matches
 import math
-import datetime                         # To include time info in the missed.txt file
+import datetime                             # To include time info in the missed.txt file                              
+from datetime import datetime, time, date   
+import time as tm                           # for getting script runtime
 
 import threading
 #import multiprocessing
 
-### for getting script runtime
-import time
-start_time = time.time()
+### vars for script runtime and missed.txt time
+now = datetime.now()
+
+currentTime = time(now.hour, now.minute, now.second)
+currentDate = date(now.year, now.month, now.day)
+start_time = tm.time()
 
 
 print("""
-Welcome to 
-
+Welcome to
 
 $$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\                      
 \__$$  __|$$$\    $$$ |$$  __$$\       $$  __$$\ \__|                $$ |                    
@@ -38,8 +42,8 @@ $$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\
    $$ |   $$ | \_/ $$ |\$$$$$$  |      $$ |      $$ |$$ |  $$ |\$$$$$$$ |\$$$$$$$\ $$ |      
    \__|   \__|     \__| \______/       \__|      \__|\__|  \__| \_______| \_______|\__|      
                                                                                                      
-
-example url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
+Enter a channel URL to begin.
+Example URL:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 """)
 
 
@@ -53,11 +57,11 @@ class Finder:
         self.arguments = get_arguments()
         self.sql = SqliteDatabase()
         
-        assert 3 - [self.arguments.id, self.arguments.restore_file, self.arguments.channel_url].count(None) <= 1 , "Can't have any of id, channel, restore file as combined arguments."
+        assert 3 - [self.arguments.id, self.arguments.restore_file, self.arguments.channel_url].count(None) <= 1 , "Can't have any of the ID, channel, or restore file as combined arguments."
         
         # if there is no url or id, ask for url
         if (self.arguments.id is None and self.arguments.channel_url is None and self.arguments.restore_file is None):
-            self.arguments.channel_url = input("\nPlease enter the channel url: ")   #Example input: www.youtube.com/c/GlitchxCity/featured
+            self.arguments.channel_url = input("URL: ")   #Example input: www.youtube.com/c/GlitchxCity/featured
         
         # if there is a url, verify if it's a correct URL
         if self.arguments.channel_url is not None:
@@ -81,7 +85,7 @@ class Finder:
         user_path_match = re.match(expr_user, url)
         
         if channel_path_match is None and user_path_match is None:
-            raise ValueError("Malformed URL, please give a valid URL.")
+            self.arguments.channel_url = input("The URL you entered is invalid. Please enter a valid URL: ")
         elif channel_path_match is not None:
             channel_path = channel_path_match.groups()[0]
             self.channel_url = "https://www.youtube.com" + channel_path + "/videos"
@@ -142,16 +146,16 @@ class Finder:
         try:
             subprocess.check_output(' '.join(cmd))
             sleep(0.1)
-            self.vprint(f"Video with id {id} downloaded, now performing fingerprint match scan.")
+            self.vprint(f"Video with ID {id} has been downloaded. Now performing fingerprint match scan.")
         except KeyboardInterrupt:
             ### completely exit program if this is what user wants
             self.delete_mp3s()
             exit()
         except:
             ### always show error even when verbose is off
-            cprint("Youtube audio couldn't be downloaded. Skipping for now.", "red")
+            cprint("YouTube audio couldn't be downloaded. Skipping for now.", "red")
             with open("missed.txt", "a") as f:
-                f.write(f"Missed: {id} at {datetime.datetime.now().time()}\n")
+                f.write(f"Missed video with ID {id} at {currentTime} on {currentDate}.\n")
             ### when return value is None, we go to the next song to check (see code in line 326)
             return None
         
@@ -185,14 +189,13 @@ class Finder:
                 driver = webdriver.Chrome(executable_path = r"C:\ProgramData\chocolatey\bin\chromedriver.exe")
             except:
                 print("If you see this, selenium can't find your chromedriver.")
-                print("In order to fix this, search for the chromedriver on your file system (search the whole C: for \"chromedriver.exe\")")
-                print("Now copy the file location of a chromedriver.exe and paste it")
+                print("In order to fix this, search for the chromedriver on your file system (search the whole of your OS drive for \"chromedriver.exe\").")
                 print(r"example input: C:\ProgramData\chocolatey\bin\chromedriver.exe")
-                location = input("Paste here:")
+                location = input("Now copy the file location of chromedriver.exe and paste it here:")
                 driver = webdriver.Chrome(executable_path = location)
-                print("alternatively you can put it in the code yourself so you don't have to constantly fill this in.")
-                print("To do that, in the file find_stable.py search for the line \"driver = webdriver.Chrome()\" and in between the brackets put")
-                print("executable_path = YOUR_CHROMEDRIVER_LOCATION")
+                print("Alternatively, you can put it in the code yourself so you don't have to constantly fill this in.")
+                print("To do that, in the file 'find_stable.py', search for the line \"driver = webdriver.Chrome()\" and in between the brackets put:")
+                print("executable_path = (your chromedriver location)")
         
         
         driver.get(self.channel_url)
@@ -227,18 +230,22 @@ class Finder:
         confidence = song['CONFIDENCE']
         self.vprint(f"Confidence of a match: {confidence}", "yellow")
         
-        ### If there's a match, give feedback to user
-        if confidence >= thresh:
+        ### If there's an exact match, give feedback to user, otherwise if there's a possible match notify the user as well
+        if confidence >= 5000:
+            self.vprint(f"EXACT MATCH FOUND FOR ID: {id_}", "green")
+            with open("MATCHES.txt", "a") as f:
+                f.write(f"You've found TMS. Video with ID {id_} is an EXACT match, with a confidence of {confidence}.\nWell done on solving the mystery!\n")
+        elif confidence >= thresh:
             self.vprint(f"POSSIBLE MATCH FOUND FOR ID: {id_}", "green")
             with open("MATCHES.txt", "a") as f:
-                f.write(f"Video with YT ID {id_} has a match with the database! Oh my lawd please check it\n")
+                f.write(f"Video with YT ID {id_} has a possible match with the database, with a confidence of {confidence}! Please 'check it out'.\n")
         
         return confidence >= thresh
     
         
     def get_videos(self, source):
         """
-        Exract video ids and durations from channel video page source
+        Extract video ids and durations from channel video page source
         """
         
         ### get video ids form page source.
@@ -300,9 +307,9 @@ class Finder:
         if possible_match:
             song_fname = os.path.split(song_fpath)[1]
             with open("MATCHES.txt", "a") as f:
-                f.write(f"{song_fname} with YT ID {id_} has a match with the database! Oh my lawd please check it\n")
+                f.write(f"{song_fname} with YT ID {id_} has a possible match with the database! Please 'check it out'.\n")
         else:
-            self.vprint("Probably not a match")
+            self.vprint("Probably not a match.")
     
     
     def check_channel(self, max_duration=210):
@@ -320,9 +327,9 @@ class Finder:
                 (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(video["id"])))):
                 target_videos.append(video)
         
-        ### Get total number of vidoes to display progress percentage
+        ### Get total number of videos to display progress percentage
         total_videos = len(target_videos)
-        if total_videos == 0: self.vprint("All videos have been checked or are longer than than the max duration.","green"), exit()
+        if total_videos == 0: self.vprint("All videos have been checked or are longer than than the maximum duration.","green"), exit()
         
         
         ### We use two indexes, both for a different purpose, _ is for progress percentage, 'index' is for getting correct slices of target_videos (so multithreading purposes)
@@ -376,7 +383,7 @@ class Finder:
         else:
             self.check_channel()
         
-        self.vprint(f"runtime: {time.time() - start_time}")
+        self.vprint(f"Duration of channel scan in seconds: {tm.time() - start_time}")
         
 
 def get_arguments():
