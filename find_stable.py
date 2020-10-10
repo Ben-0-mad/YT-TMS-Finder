@@ -383,7 +383,7 @@ class Finder:
         else:
             self.check_channel()
         
-        self.vprint(f"Duration of channel scan in seconds: {time.time() - start_time}")
+        self.vprint(f"Duration of channel scan in seconds: {tm.time() - start_time}")
         
 
 def get_arguments():
