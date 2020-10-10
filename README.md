@@ -28,6 +28,8 @@ usage: ```find_stable.py [-h] [-i] [-s] [-v] [-t THRESHOLD] [-m THREADS] [-c CHA
 1. ```-id``` to check only one video ID
 1. ```-r``` for restore file (This restore file has to be the html source of a youtube channel)
 
+*The restore file is automatically created after the first time you grab the HTML of a youtube channel*
+
 Some unidentified music we find is different in BPM/pitch, therefore [this package](https://www.dropbox.com/s/ze3nzu8lecy6ndl/TMS%20subtle%20variants%20on%20tone%20and%20speed.zip?dl=0) with slightly different versions of TMS is available. Just put the files in the "mp3" folder and do ```python collect-fingerprints-of-songs.py```.
 
 ## How to set up on Windows
