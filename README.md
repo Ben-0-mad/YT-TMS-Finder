@@ -10,10 +10,11 @@ This code was made in an effort to make it easier to find the song that has been
 
 The necessary code was already available, I just made them work together.
 
-## Credits:
+## Credits & contributors:
 - Credit to the makers of youtube-dl
 - Special thanks and credit to Itspoma, the creator of the audio fingerprinting and recognition code.
 - Thanks to nrsyed for helping with code optimisation.
+- Thanks to Tamago for contributing.
 
 ## How to use
 usage: ```find_stable.py [-h] [-i] [-s] [-v] [-t THRESHOLD] [-m THREADS] [-c CHANNEL_URL] [-id ID] [-r RESTORE_FILE]```
@@ -26,6 +27,8 @@ usage: ```find_stable.py [-h] [-i] [-s] [-v] [-t THRESHOLD] [-m THREADS] [-c CHA
 1. ```-c``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
 1. ```-id``` to check only one video ID
 1. ```-r``` for restore file (This restore file has to be the html source of a youtube channel)
+
+Some unidentified music we find is different in BPM/pitch, therefore [this package](https://www.dropbox.com/s/ze3nzu8lecy6ndl/TMS%20subtle%20variants%20on%20tone%20and%20speed.zip?dl=0) with slightly different versions of TMS is available. Just put the files in the "mp3" folder and do ```python collect-fingerprints-of-songs.py```.
 
 ## How to set up on Windows
 
