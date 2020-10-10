@@ -185,6 +185,7 @@ If you'd like to contribute, these are things that still need to be done:
 - Include timestamps in matches.txt
 - Add max_duration argument for the argparser
 - Finish FAQ section
+- Create and test setup file for windows and linux to make installation quicker.
 
 ## FAQ
 - How to check a youtube channel?
