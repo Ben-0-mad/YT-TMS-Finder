@@ -228,7 +228,7 @@ class Finder:
         matches = run_recognition(fpath)
         song = align_matches(self.sql, matches)
         confidence = song['CONFIDENCE']
-        self.vprint(f"Confidence of a match: {confidence}", "yellow")
+        self.vprint(f"Confidence of a match: {confidence}.", "yellow")
         
         ### If there's an exact match, give feedback to user, otherwise if there's a possible match notify the user as well
         if confidence >= 400:
