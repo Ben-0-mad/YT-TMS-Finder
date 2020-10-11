@@ -89,7 +89,7 @@ sudo apt install ffmpeg
 
 5. In case you have any problems with installing PyAudio, please check out [this](https://stackoverflow.com/questions/20023131/cannot-install-pyaudio-gcc-error)
 
-6. To install the chromedriver on linux: please go see [here](https://makandracards.com/makandra/29465-install-chromedriver-on-linux)
+6. To install the chromedriver on Linux: please go see [here](https://makandracards.com/makandra/29465-install-chromedriver-on-linux)
 
 7. Then do: ```python find_stable.py```
 
