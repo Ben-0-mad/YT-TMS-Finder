@@ -228,17 +228,17 @@ class Finder:
         matches = run_recognition(fpath)
         song = align_matches(self.sql, matches)
         confidence = song['CONFIDENCE']
-        self.vprint(f"Confidence of a match: {confidence}", "yellow")
+        self.vprint(f"Confidence of a match: {confidence}.", "yellow")
         
         ### If there's an exact match, give feedback to user, otherwise if there's a possible match notify the user as well
         if confidence >= 400:
             self.vprint(f"EXACT MATCH FOUND FOR ID: {id_}", "green")
             with open("MATCHES.txt", "a") as f:
-                f.write(f"You've found an identical match with the database. Video with ID {id_} is an EXACT match, with a confidence of {confidence}.\n")
+                f.write(f"You've found an identical match with the database. Video with ID {id_} is an EXACT match, with a confidence of {confidence}. Checked at {currentTime} on {currentDate}.\n")
         elif confidence >= thresh:
             self.vprint(f"POSSIBLE MATCH FOUND FOR ID: {id_}", "green")
             with open("MATCHES.txt", "a") as f:
-                f.write(f"Video with YT ID {id_} has a possible match with the database, with a confidence of {confidence}! Please 'check it out'.\n")
+                f.write(f"Video with YT ID {id_} has a possible match with the database, with a confidence of {confidence}! Check it out! Checked at {currentTime} on {currentDate}.\n")
         
         return confidence >= thresh
     
@@ -307,7 +307,7 @@ class Finder:
         if possible_match:
             song_fname = os.path.split(song_fpath)[1]
             with open("MATCHES.txt", "a") as f:
-                f.write(f"{song_fname} with YT ID {id_} has a possible match with the database! Please 'check it out'.\n")
+                f.write(f"{song_fname} with YT ID {id_} has a possible match with the database! Check it out! Checked at {currentTime} on {currentDate}.\n")
         else:
             self.vprint("Probably not a match.")
     
@@ -404,4 +404,3 @@ def get_arguments():
 if __name__ == '__main__':
     finder = Finder()
     finder.main()
-
