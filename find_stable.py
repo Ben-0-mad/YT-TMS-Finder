@@ -146,16 +146,16 @@ class Finder:
         try:
             subprocess.check_output(' '.join(cmd))
             sleep(0.1)
-            self.vprint(f"Video with ID {id} has been downloaded. Now performing fingerprint match scan.")
+            self.vprint(f"Video with ID {id} has been downloaded! Performing fingerprint match scan...")
         except KeyboardInterrupt:
             ### completely exit program if this is what user wants
             self.delete_mp3s()
             exit()
         except:
             ### always show error even when verbose is off
-            cprint("YouTube audio couldn't be downloaded. Skipping for now.", "red")
+            cprint("Video audio couldn't be downloaded. Skipping for now. Please check missed.txt for more info.", "red")
             with open("missed.txt", "a") as f:
-                f.write(f"Missed video with ID {id} at {currentTime} on {currentDate}.\n")
+                f.write(f"{currentDate} {currentTime}: Could not check video with ID {id}. Please copy and paste this URL in your browser to check: 'youtube.com/watch?v={id}'\n")
             ### when return value is None, we go to the next song to check (see code in line 326)
             return None
         
@@ -188,10 +188,10 @@ class Finder:
             try:
                 driver = webdriver.Chrome(executable_path = r"C:\ProgramData\chocolatey\bin\chromedriver.exe")
             except:
-                print("If you see this, selenium can't find your chromedriver.")
-                print("In order to fix this, search for the chromedriver on your file system (search the whole of your OS drive for \"chromedriver.exe\").")
-                print(r"example input: C:\ProgramData\chocolatey\bin\chromedriver.exe")
-                location = input("Now copy the file location of chromedriver.exe and paste it here:")
+                print("If you see this message, that means selenium can't find 'chromedriver.exe.'")
+                print("To fix this, search for 'chromedriver.exe' on your file system.")
+                print(r"Example of 'chromedriver.exe' path: 'C:\ProgramData\chocolatey\bin\chromedriver.exe'")
+                location = input("Once you've found 'chromedriver.exe', paste the location to it here: ")
                 driver = webdriver.Chrome(executable_path = location)
                 print("Alternatively, you can put it in the code yourself so you don't have to constantly fill this in.")
                 print("To do that, in the file 'find_stable.py', search for the line \"driver = webdriver.Chrome()\" and in between the brackets put:")
@@ -234,11 +234,11 @@ class Finder:
         if confidence >= 400:
             self.vprint(f"EXACT MATCH FOUND FOR ID: {id_}", "green")
             with open("MATCHES.txt", "a") as f:
-                f.write(f"You've found an identical match with the database. Video with ID {id_} is an EXACT match, with a confidence of {confidence}. Checked at {currentTime} on {currentDate}.\n")
+                f.write(f"{currentDate} {currentTime}: You've found an identical match with the database. Video with ID {id_} is an EXACT match, with a confidence of {confidence}!!\n")
         elif confidence >= thresh:
             self.vprint(f"POSSIBLE MATCH FOUND FOR ID: {id_}", "green")
             with open("MATCHES.txt", "a") as f:
-                f.write(f"Video with YT ID {id_} has a possible match with the database, with a confidence of {confidence}! Check it out! Checked at {currentTime} on {currentDate}.\n")
+                f.write(f"{currentDate} {currentTime}: Video with YT ID {id_} has a possible match with the database, with a confidence of {confidence}! Check it out!\n")
         
         return confidence >= thresh
     
@@ -307,7 +307,7 @@ class Finder:
         if possible_match:
             song_fname = os.path.split(song_fpath)[1]
             with open("MATCHES.txt", "a") as f:
-                f.write(f"{song_fname} with YT ID {id_} has a possible match with the database! Check it out! Checked at {currentTime} on {currentDate}.\n")
+                f.write(f"{currentDate} {currentTime}: {song_fname} with YT ID {id_} has a possible match with the database! Check it out!\n")
         else:
             self.vprint("Probably not a match.")
     
@@ -349,7 +349,7 @@ class Finder:
                         exit()
                     jobs.append(thread)
             
-            self.vprint("Downloading mp3(s)...")
+            self.vprint("Downloading audio from video with ID {id}...")
             for job in jobs:
                 _ += 1
                 job.start()
