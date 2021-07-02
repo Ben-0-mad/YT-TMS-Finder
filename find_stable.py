@@ -146,7 +146,7 @@ class Finder:
         try:
             subprocess.check_output(' '.join(cmd))
             sleep(0.1)
-            self.vprint(f"Video with ID {id} has been downloaded! Performing fingerprint match scan...")
+            self.vprint(f"Audio downloaded! Performing fingerprint match scan...")
         except KeyboardInterrupt:
             ### completely exit program if this is what user wants
             self.delete_mp3s()
