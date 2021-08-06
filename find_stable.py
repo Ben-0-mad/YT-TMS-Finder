@@ -348,7 +348,7 @@ class Finder:
                         exit()
                     jobs.append(thread)
             
-            self.vprint("Downloading audio from video with ID {id}...")
+            self.vprint(f"Downloading audio from video with ID {id_}...")
             for job in jobs:
                 _ += 1
                 job.start()
