@@ -198,7 +198,7 @@ class Finder:
         
         
         driver.get(self.channel_url)
-        sleep(2)
+        sleep(5)
         source = driver.page_source
         
         ### Keep scrolling until we hit the end of the page
