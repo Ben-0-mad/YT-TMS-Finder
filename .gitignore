@@ -1,9 +1,6 @@
 *.pyc
 restore_file.html
 3thread.bat
-db/fingerprints2.db
-db/fingerprints2.db-journal
-db/fingerprints2.db
 MATCHES.txt
 missed.txt
 *.webm
