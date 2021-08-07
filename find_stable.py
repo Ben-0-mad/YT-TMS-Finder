@@ -231,13 +231,13 @@ class Finder:
         
         ### If there's an exact match, give feedback to user, otherwise if there's a possible match notify the user as well
         if confidence >= 400:
-            self.vprint(f"EXACT MATCH FOUND FOR ID: {id_}", "green")
+            self.vprint(f"EXACT MATCH FOUND FOR ID: {id_}, CHECK MATCHES.TXT", "green")
             with open("MATCHES.txt", "a") as f:
-                f.write(f"{currentDate} {currentTime}: You've found an identical match with the database. Video with ID {id_} is an EXACT match, with a confidence of {confidence}!!\n")
+                f.write(f"{currentDate} {currentTime}: You've found an identical match with the database. Video with ID {id_} is an EXACT match, with a confidence of {confidence}!! Check it out at youtube.com/watch?v={id_}!\n")
         elif confidence >= thresh:
-            self.vprint(f"POSSIBLE MATCH FOUND FOR ID: {id_}", "green")
+            self.vprint(f"POSSIBLE MATCH FOUND FOR ID: {id_}, CHECK MATCHES.TXT", "green")
             with open("MATCHES.txt", "a") as f:
-                f.write(f"{currentDate} {currentTime}: Video with YT ID {id_} has a possible match with the database, with a confidence of {confidence}! Check it out!\n")
+                f.write(f"{currentDate} {currentTime}: Video with YT ID {id_} has a possible match with the database, with a confidence of {confidence}! Check it out at youtube.com/watch?v={id_}!\n")
         
         return confidence >= thresh
     
