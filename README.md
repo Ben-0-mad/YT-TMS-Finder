@@ -1,12 +1,14 @@
-# Youtube TMS Finder
+# YouTube TMS Finder
 
-To find unidentified music.
+To find unidentified music on YouTube.
 
-![](https://i.ibb.co/w7zGH3d/intro-image2.png)
+![](https://i.ibb.co/jWpv8rN/Windows-Terminal-d-TKLealgu-T.png)
 
 ## What you need to know
 
-This code was made in an effort to make it easier to find the song that has been dubbed as 'the most mysterious song on the internet' and it makes it possible to search youtube channels for songs without having to manually check the videos. This is done by crawling their YouTube channel, downloading a video if it is under 4 minutes long, fingerprinting the audio, and checking it against a database (the database which is included in this program). It was developed for Windows so people don't have to install virtual machines or WSL subsystems or anything like that, and also because my university administrator doesn't allow changing operating systems. But it should work on Linux as well.
+This code was made in an effort to make it easier to find the song that has been dubbed 'The Most Mysterious Song on the Internet' as well as other unknown songs. This tool makes it possible to search YouTube channels for songs without having to manually check the videos. 
+
+This is done by crawling the YouTube channel, downloading a video if it is under 4 minutes long, fingerprinting the audio, and checking it against a database (which is included in this program). It was developed for Windows so people don't have to install virtual machines or WSL subsystems or anything like that, and also because my university administrator doesn't allow changing operating systems. But it should work on Linux as well.
 
 The necessary code was already available, I just made them work together.
 
@@ -37,37 +39,35 @@ Some unidentified music we find is different in BPM/pitch, therefore [this packa
 
 ## How to set up on Windows
 
-1. Make sure you have python 3 installed.
+1. Make sure you have Python 3 installed.
 1. Open a command prompt and install the requirements:
 ```
 > pip install -r requirements.txt
 ```
-3. Do you have problems installing PyAudio? Please skip to the next step.
+3. If you have problems installing PyAudio, skip to the next step.
 
 4. To make the installation easier, we'll use chocolately which is just like brew, pip, or other module utilities. Open up CMD in the administrator mode and do this command:
 ```
 @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin" 
 ```
 
-![](https://i.ibb.co/dmN3DvV/chocho-install.png)
-
-5. Great! Now you have Chocolately installed. Next we'll install the chromedriver. If you already have the chromedriver you can skip this step. Close the previous CMD window and open a new CMD in administrator mode, run:
+5. Great! Now you have Chocolately installed. Next we'll install the chromedriver. If you already have the chromedriver you can skip this step. Close the previous CMD window and open a new CMD in administrator mode, then run:
 ``` 
 > choco install chromedriver  
 ```
 
-6. In order to download audio from YouTube we'll need ffmpeg. We'll download this now. If you already have ffmpeg you can skip this step. In the same CMD window, run:
+6. In order to download audio from YouTube we'll need ffmpeg. We'll download this as well. If you already have ffmpeg you can skip this step. In the same CMD window, run:
 ``` 
 > choco install ffmpeg -y
 ```
 
 7. If you had any problems with installing PyAudio, that's a common issue. The solution to downloading PyAudio if the normal ```pip install pyaudio``` fails, is this:
-Go to https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio and download the .whl file for your version of python.
+- Go to https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio and download the .whl file for your version of python.
 Then open up a command prompt (press Windows key and type CMD). Navigate to the folder with the .whl file and do ```pip install PyAudio-0.2.11-cp37-cp37m-win_amd64.whl``` or whatever .whl file suits your version of python. Now you have it installed.
 
 8. Now do: ```python find_stable.py```
 
-9. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created in the folder so you don't have to check the progress constantly.
+9. Check for any matches! This will be displayed and a file called "MATCHES.txt" will be created in the folder so you don't have to check the progress constantly. If any videos get missed, they'll be logged in "misses.txt" as well.
 
 
 ## How to set up on Linux
@@ -135,81 +135,71 @@ sudo apt install ffmpeg
 
 ```
 C:\Users\username> python find_stable.py
-Welcome to
+Welcome to...
+
+__   _______   ________  ___ _____  ______ _           _
+\ \ / /_   _| |_   _|  \/  |/  ___| |  ___(_)         | |
+ \ V /  | |     | | | .  . |\ `--.  | |_   _ _ __   __| | ___ _ __
+  \ /   | |     | | | |\/| | `--. \ |  _| | | '_ \ / _` |/ _ \ '__|
+  | |   | |     | | | |  | |/\__/ / | |   | | | | | (_| |  __/ |
+  \_/   \_/     \_/ \_|  |_/\____/  \_|   |_|_| |_|\__,_|\___|_|
 
 
-$$$$$$$$\ $$\      $$\  $$$$$$\         $$$$$$\  $$\                 $$\
-\__$$  __|$$$\    $$$ |$$  __$$\       $$  __$$\ \__|                $$ |
-   $$ |   $$$$\  $$$$ |$$ /  \__|      $$ /  \__|$$\ $$$$$$$\   $$$$$$$ | $$$$$$\   $$$$$$\
-   $$ |   $$\$$\$$ $$ |\$$$$$$\        $$$$\     $$ |$$  __$$\ $$  __$$ |$$  __$$\ $$  __$$\
-   $$ |   $$ \$$$  $$ | \____$$\       $$  _|    $$ |$$ |  $$ |$$ /  $$ |$$$$$$$$ |$$ |  \__|
-   $$ |   $$ |\$  /$$ |$$\   $$ |      $$ |      $$ |$$ |  $$ |$$ |  $$ |$$   ____|$$ |
-   $$ |   $$ | \_/ $$ |\$$$$$$  |      $$ |      $$ |$$ |  $$ |\$$$$$$$ |\$$$$$$$\ $$ |
-   \__|   \__|     \__| \______/       \__|      \__|\__|  \__| \_______| \_______|\__|
-
-
-example url:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
-
-
-Please enter the channel url: https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
-sqlite - connection opened
+Enter a channel URL to begin.
+Example URL:  https://www.youtube.com/channel/UCmSynKP6bHIlBqzBDpCeQPA/videos
 
 DevTools listening on ws://127.0.0.1:36749/devtools/browser/c974ddad-0534-4ee7-9f82-50c47379fae2
 
-Song with id n2i-22aBC3E is less than 4 minutes! (0:07)
-Downloading mp3...
-This is Michael HD.mp3 downloaded, now performing fingerprint match scan. Please wait...
-mp3 deleted.
+Downloading audio from video with ID lI0kLA-7J5Q...
+Audio downloaded! Performing fingerprint match scan...
+Confidence of a match: 8.
+1.92% done
 
-Song with id Id75WC1yWXg is less than 4 minutes! (2:57)
-Downloading mp3...
-Cursed Images with The Most Mysterious Song on the Internet playing.mp3 downloaded, now performing fingerprint match scan. Please wait...
-POSSIBLE MATCH FOUND!
-mp3 deleted.
+Downloading audio from video with ID RpnhkS_Stfs...
+Audio downloaded! Performing fingerprint match scan...
+Confidence of a match: 12.
+3.85% done
 
-[[ output trunacted ]]
-
-Song with id MHuVePv1Pxo is less than 4 minutes! (0:26)
-Downloading mp3...
-PaRappa's silly fun family friendly adventures of happiness - Episode 1.mp3 downloaded, now performing fingerprint match scan. Please wait...
-mp3 deleted.
-sqlite - connection has been closed
+Downloading audio from video with ID -JRSeiogFbA...
+Audio downloaded! Performing fingerprint match scan...
+Confidence of a match: 8.
+5.77% done
 ```
 
-## Any problems might arise due to
-1. Python not being recognised as internal command. FIX by adding python interpreter folder to the PATH variable)
+## Common problems
+1. Python is not being recognised as an internal command. FIX by adding Python interpreter folder to the PATH variable.
 
 1. Problem with Selenium and chromedriver. For Windows please do step 3 and 4 of the setup!
 
-1. Problem with ffmpeg.
+1. Problem with ffmpeg. Install ffmpeg in step 6.
 
 ## Contributing
 
-If you'd like to contribute, these are things that still need to be done:
+If you'd like to contribute, these are the things that still need to be done:
 - Use youtube-dl python module instead of actual youtube-dl.exe file. This allows us to remove the youtube-dl folder in this repo.
-- Make script compatible with youtube-data API (and make this option optional), so you don't have to get open the channel url in a browser to grab the HTML and then obtain the videos.
-- Include timestamps in MATCHES.txt
+- Make script compatible with youtube-data API (and make this option optional), so you don't have to open the channel URL in a browser to grab the HTML and then obtain the videos.
+- Include timestamps in MATCHES.txt (DONE)
 - Add max_duration argument for the argparser
-- Finish FAQ section
+- Finish FAQ section in this readme
 - Create and test setup file for Windows and Linux to make installation quicker.
 
 ## FAQ
-- How to check a YouTube channel?
+- **How to check a YouTube channel?**
 
   ```
   > python find_stable.py -c CHANNEL_ID
   ```
-- Can I add my own songs to the database?
+- **Can I add my own songs to the database?**
 
   Yes, itspoma made this possible. Just upload that mp3 file into the "mp3" folder. Now do `python collect-fingerprints-of-songs.py`. Any song in the 'mp3' folder that was previously added already will be skipped. The song is now added into the database and can be recognised. For more info please check out [itspoma's repo](https://github.com/itspoma/audio-fingerprint-identifying-python).
   
-  Note: ALWAYS MAKE SURE THAT THE AUDIO YOU PUT IN THE "mp3" FOLDER ARE DOWNLOADED FROM YOUTUBE. This has to do with how YouTube processes audio. If you download something from YouTube and compare it to something downloaded from YouTube, you are likely not to miss that there is a match. If the audio you put in the database is not download from YouTube, you might see that the bot does not find a match. I know this is very strange but unfortunately I have no idea why this happens.
+  Note: **Make sure that the audio you're adding to the database was downloaded from YouTube!** This has to do with how YouTube processes audio. If you download something from YouTube and compare it to something downloaded from YouTube, you are likely not to miss a match. If the audio you put in the database is not download from YouTube, you might see that the bot does not find a match. I know this is very strange but unfortunately I have no idea why this happens.
   
-- Is it storage efficient?
+- **Is it storage efficient?**
   
-  After installing the necessary modules, yes.
+  After installing the necessary modules, yes. The bot automatically deletes mp3 files after they have been checked against the database.
 
-- What is the optimal number of threads?
+- **What is the optimal number of threads?**
   
   After doing a couple of quick tests, I got these results:
   
@@ -222,9 +212,11 @@ If you'd like to contribute, these are things that still need to be done:
   Therefore it seems like 3 threads is a good option. And after doing some tests with a larger number of videos, I got these results:
   [To be finished]
 
-- How does it work in detail?
+- **How does it work in detail?**
   
-  First we have to get all the video ID's from a YouTube channel. This is not possbile by simply using requests or beautifulsoup. We would have to open the browser ourselves going down all the way to the bottom of the page, but we can also do this with webbot so we don't have to do it. Then it downloads the HTML source. From this HTML file we can obtain all the video ID's and their time length without the need of the YouTube API (which costs money). For every video the following is done:
+  First we have to get all the video IDs from a YouTube channel. This is not possbile by simply using requests or beautifulsoup. We would have to open the browser ourselves going down all the way to the bottom of the page, but we can also do this with a webbot so we don't have to do it ourselves. 
+  
+  Then it downloads the HTML source. From this HTML file we can obtain all the video IDs and their time length without the need of the YouTube API (which costs money). For every video the following is done:
   1. If the video length is less than 4 minutes, download the audio from the video in mp3 format using youtube-dl.
   2. Fingerprint the song.
   3. Match the fingerprint against the database.
