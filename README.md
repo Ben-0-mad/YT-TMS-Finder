@@ -32,6 +32,8 @@ find_stable.py [-h] [-i] [-s] [-v] [-t THRESHOLD] [-m THREADS] [-c CHANNEL_URL] 
 1. ```-c``` to supply channel URL from command line, if this is not supplied, it will be asked automatically.
 1. ```-id``` to check only one video ID
 1. ```-r``` for restore file (This restore file has to be the html source of a youtube channel)
+1. ```-mnd``` set the min duration of videos that you want to check
+1. ```-mxd``` set the max duration of videos that you want to check 
 
 **The restore file is automatically created after the first time you grab the HTML of a YouTube channel.**
 

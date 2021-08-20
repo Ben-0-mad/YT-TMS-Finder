@@ -271,6 +271,7 @@ class Finder:
         ### Making video durations list
         durations = []
         for raw_duration in raw_durations:
+            
             time_units = raw_duration.split(":")
             seconds = int(time_units[-1])
             minutes = int(time_units[-2])
@@ -311,7 +312,7 @@ class Finder:
             self.vprint("Probably not a match.")
     
     
-    def check_channel(self, max_duration=210):
+    def check_channel(self, min_duration, max_duration):
         #Get the HTML source of the channel's video section
         source = self.get_channel_source()
         videos = self.get_videos(source)
@@ -321,9 +322,10 @@ class Finder:
             ### this seems like complicated logic but it's exactly what we want, 
             ### please fill in "(p^~q) or (p ^ (q^ (~r)))" on the website 
             ### https://web.stanford.edu/class/cs103/tools/truth-table-tool/ to see for yourself
-            if ((self.ignore_checked == False and video["duration"] <=max_duration) 
+            correctDuration =  video["duration"] >= min_duration and video["duration"] <= max_duration
+            if ((self.ignore_checked == False and correctDuration) 
                 or 
-                (video["duration"]<= max_duration and (self.ignore_checked == True and not self.sql.in_checked_ids(video["id"])))):
+                (correctDuration and (self.ignore_checked == True and not self.sql.in_checked_ids(video["id"])))):
                 target_videos.append(video)
         
         ### Get total number of videos to display progress percentage
@@ -380,7 +382,7 @@ class Finder:
         if self.arguments.id is not None:
             self.check_one_video(self.arguments.id)
         else:
-            self.check_channel()
+            self.check_channel(min_duration=self.arguments.min_duration, max_duration = self.arguments.max_duration)
         
         self.vprint(f"Duration of channel scan in seconds: {tm.time() - start_time}")
         
@@ -396,6 +398,8 @@ def get_arguments():
     parser.add_argument("-c", "--channel", dest = "channel_url", help="Parse the channel url as command line argument")
     parser.add_argument("-id" ,"--id", dest = "id", help = "Test a single video instead of a whole YT channel.")
     parser.add_argument("-r", "--restore-file", dest = "restore_file", help="Give a restore file to get the html source of a channel without opening the browser again")
+    parser.add_argument("-mnd", "--min-duration", dest = "min_duration", default = 0, type = int, help = "Set the min duration of videos of the videos that you want to check." )
+    parser.add_argument("-mxd", "--max-duration", dest = "max_duration", default = 210, type = int, help = "Set the max duration of videos of the videos that you want to check." )
     
     return parser.parse_args()
 
