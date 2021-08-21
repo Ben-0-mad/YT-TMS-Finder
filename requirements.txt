@@ -10,3 +10,4 @@ pydub
 black
 flake8
 selenium
+youtube-dl
