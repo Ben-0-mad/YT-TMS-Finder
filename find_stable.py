@@ -271,7 +271,8 @@ class Finder:
         ### Making video durations list
         durations = []
         for raw_duration in raw_durations:
-            
+            if raw_duration[0] not in "0123456789":
+                continue
             time_units = raw_duration.split(":")
             seconds = int(time_units[-1])
             minutes = int(time_units[-2])
