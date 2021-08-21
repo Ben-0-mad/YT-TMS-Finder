@@ -19,6 +19,7 @@ import datetime                             # To include time info in the missed
 from datetime import datetime, time, date   
 import time as tm                           # for getting script runtime
 
+import youtube_dl 
 import threading
 #import multiprocessing
 
@@ -102,6 +103,44 @@ class Finder:
             cprint(text, colour)
     
     
+    def get_song_mp3_do_not_use2(self, id:str) -> str:
+        """
+        Downloads the audio from a youtube video in mp3 format given a video id.
+        """
+        dir_here = os.path.abspath(os.getcwd())
+        dir_mp3s = os.path.join(dir_here, "downloaded_mp3s")
+
+        url = "https://youtube.com/watch?v=" + id
+        interm_out = os.path.join(dir_mp3s, f"{id}.%(ext)s")
+
+
+        postprocessor_args = []
+        postprocessor_args.extend(["-ss", "00:00:00.00"])
+        postprocessor_args.extend(["-t", "00:00:15.00"])
+
+        ydl_opts = {
+            "format": "bestaudio/best",
+            "outtmpl": interm_out,
+            'postprocessors': [
+                {
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192'
+                }
+            ],
+            "postprocessor_args": postprocessor_args,
+            "quiet": True,
+            "no_warnings": True
+        }
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+
+        self.vprint(f"Audio downloaded! Performing fingerprint match scan...")
+
+        return os.path.abspath(os.path.join("downloaded_mp3s", os.listdir("downloaded_mp3s")[0]))
+
+
     def get_song_mp3(self, id: str) -> str:
         """
         Downloads the audio from a youtube video in mp3 format given a video id.
@@ -393,7 +432,7 @@ def get_arguments():
     
     parser.add_argument("-i", "--ignore", dest = "ignore", default=False, help="Ignore already checked videos", action='store_true')
     parser.add_argument("-s", "--speedmode", dest = "speedmode", help="Activate speed mode", action = "store_true")
-    parser.add_argument("-v", "--verbose", dest = "verbose", help="Give Feedback, default = True", action = "store_true", default = True)
+    parser.add_argument("-v", "--verbose", dest = "verbose", help="Give Feedback, default = False", action = "store_true", default = False)
     parser.add_argument("-t", "--threshold", dest = "threshold", action="store", type = int, help = "Set the threshold for the number of hash matches at which you are notified of a match, default is 20", default = 20)
     parser.add_argument("-m", "--multi-threading", dest="threads", action="store",type=int, help="Amount of videos allowed to concurrently check, default is 1", default=1)
     parser.add_argument("-c", "--channel", dest = "channel_url", help="Parse the channel url as command line argument")
